@@ -63,15 +63,31 @@ button { cursor: pointer; border: none; background: none; font: inherit; }
   padding-inline: clamp(20px, 5vw, 60px);
 }
 
+/* ── Scroll progress bar ───────────────────────────── */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0%;
+  height: 2px;
+  background: linear-gradient(to right, var(--clr-accent), rgba(100, 255, 218, 0.4));
+  box-shadow: 0 0 12px var(--clr-accent-glow);
+  z-index: 999;
+  pointer-events: none;
+  transition: width 0.05s linear;
+}
+
 /* ── Reveal animation ──────────────────────────────── */
 .reveal {
   opacity: 0;
-  transform: translateY(28px);
-  transition: opacity 0.65s var(--ease-out-expo), transform 0.65s var(--ease-out-expo);
+  transform: translateY(32px);
+  filter: blur(4px);
+  transition: opacity 0.7s var(--ease-out-expo), transform 0.7s var(--ease-out-expo), filter 0.7s var(--ease-out-expo);
 }
 .reveal.visible {
   opacity: 1;
   transform: none;
+  filter: blur(0);
 }
 
 /* ── Scrollbar ─────────────────────────────────────── */

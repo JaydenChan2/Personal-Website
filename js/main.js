@@ -394,6 +394,48 @@
   });
 })();
 
+/* ── Scroll progress bar ───────────────────────────── */
+(function initScrollProgress() {
+  const bar = document.createElement('div');
+  bar.className = 'scroll-progress';
+  document.body.prepend(bar);
+
+  function update() {
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.width = max > 0 ? `${(window.scrollY / max * 100).toFixed(2)}%` : '0%';
+  }
+
+  window.addEventListener('scroll', update, { passive: true });
+})();
+
+/* ── Hero parallax + fade on scroll ───────────────── */
+(function initHeroParallax() {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const content = document.querySelector('.hero__content');
+  const hint    = document.querySelector('.hero__scroll-hint');
+  if (!content) return;
+
+  content.style.willChange = 'transform, opacity';
+
+  function update() {
+    const y = window.scrollY;
+    const vh = window.innerHeight;
+    const t  = Math.min(1, y / vh);  // 0 at top, 1 when scrolled one full viewport
+
+    content.style.transform = `translateY(${(y * 0.18).toFixed(1)}px)`;
+    content.style.opacity   = Math.max(0, 1 - t * 1.6).toFixed(3);
+    if (hint) hint.style.opacity = Math.max(0, 1 - t * 4).toFixed(3);
+  }
+
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => { update(); ticking = false; });
+  }, { passive: true });
+})();
+
 /* ── Page load fade-in ─────────────────────────────── */
 document.documentElement.style.opacity = '0';
 window.addEventListener('load', () => {
