@@ -1,444 +1,292 @@
 /* =====================================================
-   PERSONAL PORTFOLIO — MAIN JAVASCRIPT
+   JAYFLIX — MAIN JAVASCRIPT
    ===================================================== */
 
 'use strict';
 
-/* ── Nav: scroll behaviour ─────────────────────────── */
-(function initNav() {
-  const nav        = document.getElementById('nav');
-  const hamburger  = document.getElementById('hamburger');
-  const navLinks   = document.getElementById('navLinks');
-  const allLinks   = navLinks.querySelectorAll('a');
+/* ── Intro Animation ───────────────────────────────── */
+(function initIntro() {
+  const intro    = document.getElementById('nfIntro');
+  const profiles = document.getElementById('profiles');
+  if (!intro || !profiles) return;
 
-  let lastScroll   = 0;
-  let ticking      = false;
+  // After 2.1s hold, fade the intro out then reveal profiles
+  setTimeout(() => {
+    intro.classList.add('hiding');
+    setTimeout(() => {
+      intro.style.display = 'none';
+      profiles.classList.add('active');
+    }, 560); // matches CSS transition duration
+  }, 2100);
+})();
+
+/* ── Section Switching ─────────────────────────────── */
+(function initSections() {
+  const profileCards  = document.querySelectorAll('.profile-card');
+  const allSections   = document.querySelectorAll('.nf-section');
+  const profilesEl    = document.getElementById('profiles');
+  const switchBtn     = document.getElementById('switchProfileBtn');
+  const navLogo       = document.getElementById('navLogo');
+
+  function showProfiles() {
+    allSections.forEach(s => s.classList.remove('active'));
+    profilesEl.classList.add('active');
+    switchBtn.classList.remove('visible');
+    window.scrollTo(0, 0);
+  }
+
+  function showSection(id) {
+    // Brief fade-out of profiles grid before switching
+    const grid  = document.querySelector('.profiles-grid');
+    const title = document.querySelector('.profiles-screen__title');
+    const foot  = document.querySelector('.profiles-screen__footer');
+
+    [grid, title, foot].forEach(el => {
+      if (el) { el.style.transition = 'opacity 0.28s ease'; el.style.opacity = '0'; }
+    });
+
+    setTimeout(() => {
+      profilesEl.classList.remove('active');
+      allSections.forEach(s => s.classList.remove('active'));
+
+      const target = document.getElementById(id);
+      if (target) target.classList.add('active');
+
+      switchBtn.classList.add('visible');
+      window.scrollTo(0, 0);
+
+      // Reset grid opacity for next visit
+      [grid, title, foot].forEach(el => {
+        if (el) { el.style.opacity = '1'; el.style.transition = ''; }
+      });
+    }, 300);
+  }
+
+  // Profile card clicks
+  profileCards.forEach(card => {
+    card.addEventListener('click', () => {
+      const targetId = card.dataset.target;
+      if (!targetId) return;
+
+      // Scale the clicked card
+      card.style.transition = 'transform 0.25s ease';
+      card.style.transform  = 'scale(1.14)';
+      setTimeout(() => { card.style.transform = ''; }, 500);
+
+      showSection(targetId);
+    });
+
+    // Keyboard support
+    card.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        card.click();
+      }
+    });
+  });
+
+  // Switch Profile button → back to profiles
+  if (switchBtn) {
+    switchBtn.addEventListener('click', () => {
+      showProfiles();
+    });
+  }
+
+  // Logo click → also goes back to profiles
+  if (navLogo) {
+    navLogo.addEventListener('click', () => {
+      showProfiles();
+    });
+  }
+})();
+
+/* ── Nav: scroll & hide on scroll down ────────────── */
+(function initNav() {
+  const nav = document.getElementById('nav');
+  if (!nav) return;
+
+  let lastScroll = 0;
+  let ticking    = false;
 
   function onScroll() {
     if (ticking) return;
     ticking = true;
     requestAnimationFrame(() => {
-      const current = window.scrollY;
-      nav.classList.toggle('scrolled', current > 50);
-      // Hide nav on scroll down, reveal on scroll up
-      if (current > lastScroll && current > 200) {
+      const cur = window.scrollY;
+      nav.classList.toggle('scrolled', cur > 60);
+      if (cur > lastScroll && cur > 200) {
         nav.classList.add('hidden');
       } else {
         nav.classList.remove('hidden');
       }
-      lastScroll = current;
-      ticking = false;
+      lastScroll = cur;
+      ticking    = false;
     });
   }
 
   window.addEventListener('scroll', onScroll, { passive: true });
-
-  // Hamburger toggle
-  function toggleMenu(open) {
-    hamburger.classList.toggle('open', open);
-    navLinks.classList.toggle('open', open);
-    document.body.style.overflow = open ? 'hidden' : '';
-    hamburger.setAttribute('aria-expanded', String(open));
-  }
-
-  hamburger.addEventListener('click', () => {
-    const isOpen = navLinks.classList.contains('open');
-    toggleMenu(!isOpen);
-  });
-
-  // Close on link click (mobile)
-  allLinks.forEach(link => {
-    link.addEventListener('click', () => toggleMenu(false));
-  });
-
-  // Close on outside click
-  document.addEventListener('click', e => {
-    if (navLinks.classList.contains('open') &&
-        !navLinks.contains(e.target) &&
-        !hamburger.contains(e.target)) {
-      toggleMenu(false);
-    }
-  });
-
-  // Close on Escape
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && navLinks.classList.contains('open')) {
-      toggleMenu(false);
-      hamburger.focus();
-    }
-  });
 })();
 
-/* ── Reveal on scroll (Intersection Observer) ──────── */
-(function initReveal() {
-  const revealEls = document.querySelectorAll('.reveal');
-  if (!revealEls.length) return;
+/* ── Project Modal ─────────────────────────────────── */
+(function initProjectModal() {
+  const PROJECTS = {
+    chudai: {
+      title: 'CHUD.AI — Facial Geometry Analysis',
+      category: 'AI · Computer Vision · Full Stack',
+      mediaType: 'youtube',
+      mediaId: 'Jv91GEhY3nk',
+      desc: 'An AI-powered facial geometry analysis engine with a real-time browser dashboard. Uses Google MediaPipe Face Mesh to track 468 facial landmarks and computes aesthetic metrics including Canthal Tilt, Facial Width-to-Height Ratio, Midface Ratio, bilateral Symmetry, and Golden Ratio adherence. Runs a 10-second averaged scan to produce a locked final score.',
+      tags: ['Python', 'Flask', 'MediaPipe', 'NumPy', 'OpenCV', 'JavaScript'],
+      github: 'https://github.com/JaydenChan2/chud-ai',
+    },
+    musicsheet: {
+      title: 'Music to Sheet Converter',
+      category: 'Audio Processing · Full Stack',
+      mediaType: 'placeholder',
+      mediaIcon: '🎵 → 🎼',
+      mediaBg: 'linear-gradient(135deg,#1a1a2e,#16213e,#0f3460)',
+      desc: 'A full-stack application that converts MP3 / WAV audio files into guitar tablature and sheet music notation using audio signal processing. Users upload an audio file through a React UI; a Flask backend uses Librosa and NumPy to analyse the signal and generate playable guitar tabs in the browser. MIDI and PDF export coming soon.',
+      tags: ['React 19', 'Vite', 'Flask', 'Librosa', 'NumPy', 'TailwindCSS'],
+      github: 'https://github.com/JaydenChan2/Music-to-Sheet-Converter',
+    },
+    stock: {
+      title: 'Stock Analysis & Portfolio Optimizer',
+      category: 'Finance · Data Analytics',
+      mediaType: 'placeholder',
+      mediaIcon: '📈',
+      mediaBg: 'linear-gradient(135deg,#134e5e,#71b280)',
+      desc: 'Flask-based platform that pulls real-time stock data via yfinance, applies RSI and Bollinger Bands to generate Buy/Sell/Hold signals with a confidence score, scans the market for active buys, and distributes a given budget across the strongest opportunities using portfolio optimisation.',
+      tags: ['Python', 'Flask', 'Pandas', 'NumPy', 'yfinance'],
+      github: 'https://github.com/JaydenChan2/Stock-Prediction',
+    },
+    roomies: {
+      title: 'Roomies',
+      category: 'Social · In Development',
+      mediaType: 'placeholder',
+      mediaIcon: '🏠',
+      mediaBg: 'linear-gradient(135deg,#4a1942,#c05b5b)',
+      desc: 'An app that personalises your roommate search journey — matching you with compatible people so you\'re sure to get along with whoever you live with. The platform focuses on personality, lifestyle habits, and scheduling compatibility to make university housing less of a gamble. Currently in active development.',
+      tags: ['In Development'],
+      github: 'https://github.com/JaydenChan2/Roomies',
+    },
+  };
 
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach((entry, i) => {
-      if (!entry.isIntersecting) return;
-      // Stagger cards in a grid
-      const delay = entry.target.closest('.skills__grid, .other-projects')
-        ? [...entry.target.parentElement.children].indexOf(entry.target) * 80
-        : 0;
-      setTimeout(() => {
-        entry.target.classList.add('visible');
-      }, delay);
-      io.unobserve(entry.target);
-    });
-  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  const modal    = document.getElementById('projModal');
+  const backdrop = document.getElementById('projModalBackdrop');
+  const closeBtn = document.getElementById('projModalClose');
+  const mediaEl  = document.getElementById('projModalMedia');
+  const titleEl  = document.getElementById('projModalTitle');
+  const catEl    = document.getElementById('projModalCategory');
+  const descEl   = document.getElementById('projModalDesc');
+  const tagsEl   = document.getElementById('projModalTags');
+  const ghEl     = document.getElementById('projModalGH');
 
-  revealEls.forEach(el => io.observe(el));
-})();
+  if (!modal) return;
 
-/* ── Active nav link highlight on scroll ───────────── */
-(function initActiveLink() {
-  const sections  = document.querySelectorAll('section[id]');
-  const navLinks  = document.querySelectorAll('.nav__link');
-  if (!sections.length || !navLinks.length) return;
+  function openModal(key) {
+    const proj = PROJECTS[key];
+    if (!proj) return;
 
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (!entry.isIntersecting) return;
-      navLinks.forEach(link => {
-        link.classList.toggle(
-          'nav__link--active',
-          link.getAttribute('href') === `#${entry.target.id}`
-        );
-      });
-    });
-  }, { threshold: 0.4 });
-
-  sections.forEach(s => io.observe(s));
-})();
-
-/* ── Experience tabs ───────────────────────────────── */
-(function initTabs() {
-  const tabs   = document.querySelectorAll('.exp-tab');
-  const panels = document.querySelectorAll('.exp-panel');
-  if (!tabs.length) return;
-
-  function activate(tab) {
-    const target = tab.dataset.target;
-
-    tabs.forEach(t => {
-      t.classList.remove('exp-tab--active');
-      t.setAttribute('aria-selected', 'false');
-    });
-    panels.forEach(p => p.classList.remove('exp-panel--active'));
-
-    tab.classList.add('exp-tab--active');
-    tab.setAttribute('aria-selected', 'true');
-
-    const panel = document.getElementById(target);
-    if (panel) {
-      panel.classList.add('exp-panel--active');
-      // Animate panel in
-      panel.style.animation = 'none';
-      panel.offsetHeight; // reflow
-      panel.style.animation = 'fadeUp 0.35s ease both';
-    }
-  }
-
-  tabs.forEach(tab => {
-    tab.addEventListener('click', () => activate(tab));
-
-    // Keyboard navigation
-    tab.addEventListener('keydown', e => {
-      const tabList = [...tabs];
-      const idx = tabList.indexOf(tab);
-      if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
-        e.preventDefault();
-        tabList[(idx + 1) % tabList.length].focus();
-      } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
-        e.preventDefault();
-        tabList[(idx - 1 + tabList.length) % tabList.length].focus();
-      } else if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        activate(tab);
-      }
-    });
-  });
-})();
-
-/* ── Smooth scroll for anchor links ────────────────── */
-(function initSmoothScroll() {
-  document.querySelectorAll('a[href^="#"]').forEach(link => {
-    link.addEventListener('click', e => {
-      const target = document.querySelector(link.getAttribute('href'));
-      if (!target) return;
-      e.preventDefault();
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
-  });
-})();
-
-/* ── Typed cursor effect in hero ───────────────────── */
-(function initTyped() {
-  const tagline = document.querySelector('.hero__tagline');
-  if (!tagline) return;
-
-  const phrases = [
-    'I build things for the web.',
-    'I craft user experiences.',
-    'I solve hard problems.',
-    'I ship production code.',
-  ];
-
-  let phraseIdx  = 0;
-  let charIdx    = 0;
-  let deleting   = false;
-  let paused     = false;
-
-  // Only run if user has no motion preference
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-  // Add cursor element
-  const cursor = document.createElement('span');
-  cursor.className = 'typed-cursor';
-  cursor.textContent = '|';
-  cursor.style.cssText = `
-    color: var(--clr-accent);
-    animation: blink 1s step-end infinite;
-    margin-left: 2px;
-    font-weight: 300;
-  `;
-  const style = document.createElement('style');
-  style.textContent = '@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }';
-  document.head.appendChild(style);
-  tagline.appendChild(cursor);
-
-  let baseText = '';
-
-  function tick() {
-    const phrase = phrases[phraseIdx];
-
-    if (!deleting) {
-      charIdx++;
-      tagline.firstChild.textContent = phrase.slice(0, charIdx);
-      if (charIdx === phrase.length) {
-        paused = true;
-        setTimeout(() => { paused = false; deleting = true; schedule(); }, 1800);
-        return;
-      }
+    if (proj.mediaType === 'youtube') {
+      mediaEl.className = 'proj-modal__media';
+      mediaEl.style.background = '';
+      mediaEl.innerHTML = `<iframe
+        src="https://www.youtube.com/embed/${proj.mediaId}?autoplay=1&mute=1&loop=1&playlist=${proj.mediaId}&controls=1&rel=0&modestbranding=1"
+        title="${proj.title}"
+        frameborder="0"
+        allow="autoplay; encrypted-media"
+        allowfullscreen
+      ></iframe>`;
     } else {
-      charIdx--;
-      tagline.firstChild.textContent = phrase.slice(0, charIdx);
-      if (charIdx === 0) {
-        deleting = false;
-        phraseIdx = (phraseIdx + 1) % phrases.length;
-        setTimeout(schedule, 300);
-        return;
-      }
-    }
-    schedule();
-  }
-
-  function schedule() {
-    const speed = deleting ? 40 : 65;
-    setTimeout(tick, speed + Math.random() * 25);
-  }
-
-  // Insert a text node before the cursor
-  tagline.innerHTML = '';
-  tagline.appendChild(document.createTextNode(phrases[0]));
-  tagline.appendChild(cursor);
-  charIdx = phrases[0].length;
-
-  setTimeout(() => { deleting = true; schedule(); }, 2200);
-})();
-
-/* ── Matrix rain background ────────────────────────── */
-(function initMatrixBg() {
-  const canvas = document.getElementById('matrix-bg');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-
-  const CELL        = 18;           // px per character cell
-  const DROP_SPEED  = 0.35;         // cells per frame
-  const FADE        = 0.93;         // opacity multiplier per frame for trail
-  const FLIP_CHANCE = 0.018;        // chance a resting char randomly flips
-  const CURSOR_R    = 180;          // cursor highlight radius in px
-  const ACCENT      = [100, 255, 218]; // --clr-accent rgb
-
-  let cols, rows, grid, drops;
-  // Smoothed mouse position (lerped for a soft glow follow)
-  let mouse    = { x: -9999, y: -9999 };
-  let mouseLerp = { x: -9999, y: -9999 };
-
-  function makeGrid() {
-    cols = Math.ceil(canvas.width  / CELL) + 1;
-    rows = Math.ceil(canvas.height / CELL) + 2;
-    grid = Array.from({ length: cols }, () =>
-      Array.from({ length: rows }, () => ({
-        ch: Math.random() > 0.5 ? '1' : '0',
-        op: 0,
-      }))
-    );
-    drops = Array.from({ length: cols }, () =>
-      -(Math.random() * rows * 1.5)   // stagger starts
-    );
-  }
-
-  function resize() {
-    canvas.width  = window.innerWidth;
-    canvas.height = window.innerHeight;
-    makeGrid();
-  }
-
-  function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.font      = `${CELL - 3}px "JetBrains Mono", monospace`;
-    ctx.textAlign = 'left';
-
-    // Lerp mouse toward actual position
-    mouseLerp.x += (mouse.x - mouseLerp.x) * 0.1;
-    mouseLerp.y += (mouse.y - mouseLerp.y) * 0.1;
-
-    // Advance each column's drop and update grid opacities
-    for (let c = 0; c < cols; c++) {
-      const head = Math.floor(drops[c]);
-
-      // Stamp new char at the drop head
-      if (head >= 0 && head < rows) {
-        grid[c][head].ch = Math.random() > 0.5 ? '1' : '0';
-        grid[c][head].op = 1;
-      }
-
-      // Fade the whole column trail and randomly flip chars
-      for (let r = 0; r < rows; r++) {
-        const cell = grid[c][r];
-        if (cell.op > 0) cell.op *= FADE;
-        if (Math.random() < FLIP_CHANCE) cell.ch = Math.random() > 0.5 ? '1' : '0';
-      }
-
-      drops[c] += DROP_SPEED;
-      if (drops[c] - rows > 8) {
-        drops[c] = -(Math.random() * rows * 0.6 + 4);
-      }
+      mediaEl.innerHTML = '';
+      mediaEl.className = 'proj-modal__media proj-modal__media--placeholder';
+      mediaEl.style.background = proj.mediaBg || '#1a1a1a';
+      const icon = document.createElement('span');
+      icon.textContent = proj.mediaIcon || '📁';
+      mediaEl.appendChild(icon);
     }
 
-    // Draw every visible cell
-    for (let c = 0; c < cols; c++) {
-      const headRow = Math.floor(drops[c]);
+    titleEl.textContent = proj.title;
+    catEl.textContent   = proj.category;
+    descEl.textContent  = proj.desc;
+    tagsEl.innerHTML    = proj.tags.map(t => `<span class="proj-modal__tag">${t}</span>`).join('');
+    ghEl.href           = proj.github;
 
-      for (let r = 0; r < rows; r++) {
-        const cell = grid[c][r];
-        if (cell.op < 0.015) continue;
-
-        const x = c * CELL;
-        const y = r * CELL + CELL;
-
-        // Cursor proximity boost
-        const dx   = x + CELL / 2 - mouseLerp.x;
-        const dy   = y - CELL / 2 - mouseLerp.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        const boost = dist < CURSOR_R
-          ? Math.pow(1 - dist / CURSOR_R, 1.8) * 0.85
-          : 0;
-
-        const isHead = r === headRow || r === headRow - 1;
-        let [rv, gv, bv] = ACCENT;
-        let op;
-
-        if (isHead) {
-          // Bright near-white tip
-          rv = 200; gv = 255; bv = 245;
-          op = 1;
-        } else {
-          op = Math.min(0.95, cell.op * 0.65 + boost);
-        }
-
-        if (op < 0.015) continue;
-        ctx.fillStyle = `rgba(${rv},${gv},${bv},${op})`;
-        ctx.fillText(cell.ch, x, y);
-      }
-    }
+    modal.setAttribute('aria-hidden', 'false');
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
   }
 
-  resize();
-  window.addEventListener('resize', resize, { passive: true });
+  function closeModal() {
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    setTimeout(() => {
+      mediaEl.innerHTML = '';
+      mediaEl.className = 'proj-modal__media';
+      mediaEl.style.background = '';
+    }, 300);
+  }
 
-  document.addEventListener('mousemove', e => {
-    mouse.x = e.clientX;
-    mouse.y = e.clientY;
-  });
-  document.addEventListener('mouseleave', () => {
-    mouse.x = -9999;
-    mouse.y = -9999;
+  document.querySelectorAll('.proj-thumb').forEach(thumb => {
+    thumb.addEventListener('click', () => openModal(thumb.dataset.project));
+    thumb.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(thumb.dataset.project); }
+    });
   });
 
-  // Static fallback for reduced-motion
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    // Draw one quiet static frame at very low opacity
-    for (let c = 0; c < cols; c++)
-      for (let r = 0; r < rows; r++)
-        if (Math.random() < 0.15) grid[c][r].op = Math.random() * 0.15;
-    draw();
-    return;
-  }
-
-  (function loop() { draw(); requestAnimationFrame(loop); })();
+  closeBtn.addEventListener('click', closeModal);
+  backdrop.addEventListener('click', closeModal);
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && modal.classList.contains('open')) closeModal();
+  });
 })();
 
-/* ── Copy email on click ───────────────────────────── */
-(function initCopyEmail() {
-  const emailLinks = document.querySelectorAll('a[href^="mailto:"]');
-  emailLinks.forEach(link => {
-    link.addEventListener('click', e => {
-      const email = link.href.replace('mailto:', '');
-      if (navigator.clipboard) {
-        navigator.clipboard.writeText(email).catch(() => {});
-      }
+/* ── Watch Card Initials ────────────────────────────── */
+(function initWatchCardInitials() {
+  document.querySelectorAll('.watch-card').forEach(card => {
+    const poster = card.querySelector('.watch-card__poster');
+    const title  = card.querySelector('.watch-card__info h4');
+    if (!poster || !title) return;
+
+    // Remove emoji/text spans, keep .watch-card__rating
+    Array.from(poster.children).forEach(child => {
+      if (!child.classList.contains('watch-card__rating')) child.remove();
+    });
+
+    const initial = document.createElement('span');
+    initial.className = 'watch-card__initial';
+    initial.textContent = title.textContent.trim()[0].toUpperCase();
+    poster.insertBefore(initial, poster.firstChild);
+  });
+})();
+
+/* ── Song Card Play Button ─────────────────────────── */
+(function initSongPlay() {
+  document.querySelectorAll('.song-card__play-icon').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const card   = btn.closest('.song-card');
+      const iframe = card.querySelector('.song-card__player iframe');
+      if (!iframe) return;
+
+      // Strip any existing autoplay param then re-add to force reload + play
+      const baseSrc = iframe.src.replace('&autoplay=1', '');
+      iframe.src = baseSrc + '&autoplay=1';
     });
   });
 })();
 
-/* ── Scroll progress bar ───────────────────────────── */
-(function initScrollProgress() {
-  const bar = document.createElement('div');
-  bar.className = 'scroll-progress';
-  document.body.prepend(bar);
+/* ── Netflix Row Arrow Scrolling ───────────────────── */
+(function initRowArrows() {
+  const tracks = document.querySelectorAll('.nf-row__track');
+  tracks.forEach(track => {
+    const leftBtn  = track.querySelector('.nf-arrow--left');
+    const rightBtn = track.querySelector('.nf-arrow--right');
+    const row      = track.querySelector('.nf-row__items--scroll');
+    if (!row) return;
 
-  function update() {
-    const max = document.documentElement.scrollHeight - window.innerHeight;
-    bar.style.width = max > 0 ? `${(window.scrollY / max * 100).toFixed(2)}%` : '0%';
-  }
-
-  window.addEventListener('scroll', update, { passive: true });
+    const SCROLL = 320;
+    if (leftBtn)  leftBtn.addEventListener('click',  () => row.scrollBy({ left: -SCROLL, behavior: 'smooth' }));
+    if (rightBtn) rightBtn.addEventListener('click', () => row.scrollBy({ left:  SCROLL, behavior: 'smooth' }));
+  });
 })();
-
-/* ── Hero parallax + fade on scroll ───────────────── */
-(function initHeroParallax() {
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-  const content = document.querySelector('.hero__content');
-  const hint    = document.querySelector('.hero__scroll-hint');
-  if (!content) return;
-
-  content.style.willChange = 'transform, opacity';
-
-  function update() {
-    const y = window.scrollY;
-    const vh = window.innerHeight;
-    const t  = Math.min(1, y / vh);  // 0 at top, 1 when scrolled one full viewport
-
-    content.style.transform = `translateY(${(y * 0.18).toFixed(1)}px)`;
-    content.style.opacity   = Math.max(0, 1 - t * 1.6).toFixed(3);
-    if (hint) hint.style.opacity = Math.max(0, 1 - t * 4).toFixed(3);
-  }
-
-  let ticking = false;
-  window.addEventListener('scroll', () => {
-    if (ticking) return;
-    ticking = true;
-    requestAnimationFrame(() => { update(); ticking = false; });
-  }, { passive: true });
-})();
-
-/* ── Page load fade-in ─────────────────────────────── */
-document.documentElement.style.opacity = '0';
-window.addEventListener('load', () => {
-  document.documentElement.style.transition = 'opacity 0.4s ease';
-  document.documentElement.style.opacity = '1';
-});
