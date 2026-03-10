@@ -976,6 +976,14 @@ button  { cursor: pointer; border: none; background: none; font: inherit; color:
 }
 .song-card:hover .song-card__play-icon { opacity: 1; }
 
+/* Playing state — Spotify green glow */
+.song-card--playing {
+  transform: scale(1.03);
+  box-shadow: 0 0 22px 4px rgba(29, 185, 84, 0.35);
+  border-color: rgba(29, 185, 84, 0.5);
+}
+.song-card--playing .song-card__play-icon { opacity: 0; }
+
 .song-card__player {
   width: 100%;
   line-height: 0; /* remove gap under iframe */

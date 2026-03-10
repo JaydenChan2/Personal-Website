@@ -274,11 +274,17 @@
 (function initSongPlay() {
   document.querySelectorAll('.song-card__play-icon').forEach(btn => {
     btn.addEventListener('click', () => {
-      const card   = btn.closest('.song-card');
+      const card = btn.closest('.song-card');
+
+      // If Spotify IFrame API controller exists, use it
+      if (card && card._spotifyController) {
+        card._spotifyController.togglePlay();
+        return;
+      }
+
+      // Fallback: reload iframe with autoplay
       const iframe = card.querySelector('.song-card__player iframe');
       if (!iframe) return;
-
-      // Strip any existing autoplay param then re-add to force reload + play
       const baseSrc = iframe.src.replace('&autoplay=1', '');
       iframe.src = baseSrc + '&autoplay=1';
     });
@@ -299,3 +305,59 @@
     if (rightBtn) rightBtn.addEventListener('click', () => row.scrollBy({ left:  SCROLL, behavior: 'smooth' }));
   });
 })();
+
+/* ── Song Hover Preview (Spotify IFrame API) ────────── */
+window.onSpotifyIframeApiReady = (IFrameAPI) => {
+  const songCards = document.querySelectorAll('.song-card[data-spotify-id]');
+  let activeController = null;
+
+  songCards.forEach(card => {
+    const spotifyId = card.dataset.spotifyId;
+    const playerDiv = card.querySelector('.song-card__player');
+    if (!playerDiv || !spotifyId) return;
+
+    // Clear the existing iframe; the API will create its own managed embed
+    playerDiv.innerHTML = '';
+
+    const options = {
+      uri: `spotify:track:${spotifyId}`,
+      width: '100%',
+      height: 80,
+    };
+
+    IFrameAPI.createController(playerDiv, options, (controller) => {
+      let isPlaying = false;
+      let hoverTimer = null;
+
+      // Store controller on the card for the click handler fallback
+      card._spotifyController = controller;
+
+      controller.addListener('playback_update', e => {
+        isPlaying = !e.data.isPaused;
+        card.classList.toggle('song-card--playing', isPlaying);
+      });
+
+      // Hover to preview
+      card.addEventListener('mouseenter', () => {
+        hoverTimer = setTimeout(() => {
+          // Pause any other playing song first
+          if (activeController && activeController !== controller) {
+            activeController.togglePlay();
+          }
+          if (!isPlaying) {
+            controller.play();
+            activeController = controller;
+          }
+        }, 400);
+      });
+
+      card.addEventListener('mouseleave', () => {
+        clearTimeout(hoverTimer);
+        if (isPlaying) {
+          controller.togglePlay();
+          if (activeController === controller) activeController = null;
+        }
+      });
+    });
+  });
+};
