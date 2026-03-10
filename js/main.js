@@ -169,6 +169,15 @@
       tags: ['In Development'],
       github: 'https://github.com/JaydenChan2/Roomies',
     },
+    lynx: {
+      title: 'Lynx — Fundraising Co-Pilot',
+      category: 'AI · Multi-Agent Systems · FinTech',
+      mediaType: 'youtube',
+      mediaId: 'FsvDk2D9g6U',
+      desc: 'An end-to-end autonomous fundraising co-pilot and adversarial VC simulator. A multi-agent AI system that translates dense technical IP into an institutional investment thesis, matches founders with local Canadian capital, and ruthlessly simulates the boardroom pitch — stress-testing decks before they ever reach a real partner.',
+      tags: ['Python', 'Multi-Agent AI', 'LLMs', 'Flask', 'React', 'FinTech'],
+      github: 'https://github.com/arjunalwe/Lynx.git',
+    },
   };
 
   const modal    = document.getElementById('projModal');
