@@ -131,7 +131,7 @@
 (function initProjectModal() {
   const PROJECTS = {
     chudai: {
-      title: 'CHUD.AI — Facial Geometry Analysis',
+      title: 'FacePhi — Facial Geometry Analysis',
       category: 'AI · Computer Vision · Full Stack',
       mediaType: 'youtube',
       mediaId: 'Jv91GEhY3nk',
@@ -176,7 +176,7 @@
       mediaId: 'FsvDk2D9g6U',
       desc: 'An end-to-end autonomous fundraising co-pilot and adversarial VC simulator. A multi-agent AI system that translates dense technical IP into an institutional investment thesis, matches founders with local Canadian capital, and ruthlessly simulates the boardroom pitch — stress-testing decks before they ever reach a real partner.',
       tags: ['Python', 'Multi-Agent AI', 'LLMs', 'Flask', 'React', 'FinTech'],
-      github: 'https://github.com/arjunalwe/Lynx.git',
+      github: 'https://github.com/JaydenChan2/Lynx.git',
     },
   };
 
@@ -304,6 +304,83 @@
     if (leftBtn)  leftBtn.addEventListener('click',  () => row.scrollBy({ left: -SCROLL, behavior: 'smooth' }));
     if (rightBtn) rightBtn.addEventListener('click', () => row.scrollBy({ left:  SCROLL, behavior: 'smooth' }));
   });
+})();
+
+/* ── Hire Me Ad ────────────────────────────────────── */
+(function initHireAd() {
+  const ad       = document.getElementById('hireAd');
+  const skipBtn  = document.getElementById('hireAdSkip');
+  const timerEl  = document.getElementById('hireAdTimer');
+  const overlay  = document.getElementById('hireAdOverlay');
+  const cta      = document.getElementById('hireAdCta');
+  if (!ad || !skipBtn) return;
+
+  let countdownId = null;
+  let nextShowId  = null;
+
+  function showAd() {
+    ad.setAttribute('aria-hidden', 'false');
+    ad.classList.add('visible');
+    document.body.style.overflow = 'hidden';
+
+    let count = 5;
+    skipBtn.disabled = true;
+    if (timerEl) timerEl.textContent = count;
+
+    countdownId = setInterval(() => {
+      count--;
+      if (timerEl) timerEl.textContent = count;
+      if (count <= 0) {
+        clearInterval(countdownId);
+        skipBtn.disabled = false;
+        skipBtn.textContent = 'Skip Ad ›';
+      }
+    }, 1000);
+  }
+
+  function hideAd() {
+    clearInterval(countdownId);
+    ad.classList.remove('visible');
+    ad.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    // Reset skip button for next appearance
+    skipBtn.disabled = true;
+    skipBtn.innerHTML = 'Skip Ad in <span id="hireAdTimer">5</span>';
+    // Show again in 3 minutes
+    nextShowId = setTimeout(showAd, 3 * 60 * 1000);
+  }
+
+  skipBtn.addEventListener('click', hideAd);
+  overlay.addEventListener('click', hideAd);
+  cta.addEventListener('click', () => setTimeout(hideAd, 300));
+
+  // First appearance after 50 seconds
+  nextShowId = setTimeout(showAd, 50 * 1000);
+})();
+
+/* ── Cursor Glow ───────────────────────────────────── */
+(function initCursorGlow() {
+  const glow = document.getElementById('cursorGlow');
+  if (!glow || window.matchMedia('(pointer: coarse)').matches) return;
+
+  let tx = window.innerWidth / 2, ty = window.innerHeight / 2;
+  let cx = tx, cy = ty;
+
+  document.addEventListener('mousemove', e => {
+    tx = e.clientX;
+    ty = e.clientY;
+    glow.classList.add('visible');
+  });
+
+  document.addEventListener('mouseleave', () => glow.classList.remove('visible'));
+  document.addEventListener('mouseenter', () => glow.classList.add('visible'));
+
+  (function loop() {
+    cx += (tx - cx) * 0.07;
+    cy += (ty - cy) * 0.07;
+    glow.style.transform = `translate(calc(${cx}px - 50%), calc(${cy}px - 50%))`;
+    requestAnimationFrame(loop);
+  })();
 })();
 
 /* ── Song Hover Preview (Spotify IFrame API) ────────── */
