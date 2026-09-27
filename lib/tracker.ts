@@ -19,6 +19,8 @@ export type SummaryOptions = {
   weeks: number;
   maxSessionMs: number;
   categories: CategoryInfo[];
+  /** Days with logged time needed last week before the comparison is enabled. */
+  compareMinDays: number;
 };
 
 export type DayTotals = {
@@ -39,6 +41,24 @@ export type Summary = {
     total: number;
     minutes: Record<string, number>;
     sessions: Record<string, number>;
+    /** Days of this week so far, including today (Mon = 1 … Sun = 7). */
+    daysElapsed: number;
+  };
+  lastWeek: {
+    start: string;
+    total: number;
+    minutes: Record<string, number>;
+    /** Days last week with any logged time. */
+    activeDays: number;
+  };
+  /**
+   * Average minutes per day by category: this week (so far) vs last week.
+   * `enabled` is false until last week has enough data to be a fair comparison.
+   */
+  compare: {
+    enabled: boolean;
+    thisWeek: Record<string, number>;
+    lastWeek: Record<string, number>;
   };
   sentence: string;
   hasData: boolean;
@@ -114,11 +134,17 @@ function dateRange(nowMs: number, timeZone: string, weeks: number) {
   const startOffset = weekday + (weeks - 1) * 7;
   const dates: string[] = [];
   for (let i = startOffset; i >= 0; i--) dates.push(isoDate(t.y, t.m, t.d - i));
-  return { dates, weekStart: isoDate(t.y, t.m, t.d - weekday), rangeStart: localMidnight(t.y, t.m, t.d - startOffset, timeZone) };
+  return {
+    dates,
+    weekStart: isoDate(t.y, t.m, t.d - weekday),
+    lastWeekStart: isoDate(t.y, t.m, t.d - weekday - 7),
+    daysElapsed: weekday + 1,
+    rangeStart: localMidnight(t.y, t.m, t.d - startOffset, timeZone),
+  };
 }
 
 /**
- * Earliest entry the summary needs: the start of the heatmap range, minus one max
+ * Earliest entry the summary needs: the start of the summary's date range, minus one max
  * session (anything older than that can't reach into the range because of the cap).
  */
 export function windowStart(nowMs: number, opts: Pick<SummaryOptions, "timeZone" | "weeks" | "maxSessionMs">) {
@@ -172,7 +198,7 @@ function splitByDay(seg: Segment, timeZone: string) {
 }
 
 export function summarize(entries: LogEntry[], nowMs: number, opts: SummaryOptions): Summary {
-  const { dates, weekStart } = dateRange(nowMs, opts.timeZone, opts.weeks);
+  const { dates, weekStart, lastWeekStart, daysElapsed } = dateRange(nowMs, opts.timeZone, opts.weeks);
   const inRange = new Set(dates);
   const perDay = new Map<string, Map<string, number>>(dates.map((d) => [d, new Map()]));
   const weekSessions: Record<string, number> = {};
@@ -202,23 +228,41 @@ export function summarize(entries: LogEntry[], nowMs: number, opts: SummaryOptio
     return { date, total, minutes };
   });
 
-  const weekMinutes: Record<string, number> = {};
-  let weekTotal = 0;
-  for (const day of days) {
-    if (day.date < weekStart) continue;
-    for (const [activity, m] of Object.entries(day.minutes)) {
-      weekMinutes[activity] = (weekMinutes[activity] ?? 0) + m;
-      weekTotal += m;
-    }
-  }
+  const thisWeek = totalsBetween(days, weekStart, "9999-12-31");
+  const lastWeek = totalsBetween(days, lastWeekStart, weekStart);
+
+  const averagePerDay = (minutes: Record<string, number>, n: number) =>
+    Object.fromEntries(opts.categories.map((c) => [c.id, Math.round(((minutes[c.id] ?? 0) / n) * 10) / 10]));
 
   return {
     timeZone: opts.timeZone,
     days,
-    week: { start: weekStart, total: weekTotal, minutes: weekMinutes, sessions: weekSessions },
-    sentence: weekSentence(weekMinutes, weekSessions, opts.categories),
+    week: { start: weekStart, total: thisWeek.total, minutes: thisWeek.minutes, sessions: weekSessions, daysElapsed },
+    lastWeek: { start: lastWeekStart, ...lastWeek },
+    compare: {
+      enabled: lastWeek.activeDays >= opts.compareMinDays,
+      thisWeek: averagePerDay(thisWeek.minutes, daysElapsed),
+      lastWeek: averagePerDay(lastWeek.minutes, 7),
+    },
+    sentence: weekSentence(thisWeek.minutes, weekSessions, opts.categories),
     hasData: days.some((d) => d.total > 0),
   };
+}
+
+/** Sum the days with from <= date < to. */
+function totalsBetween(days: DayTotals[], from: string, to: string) {
+  const minutes: Record<string, number> = {};
+  let total = 0;
+  let activeDays = 0;
+  for (const day of days) {
+    if (day.date < from || day.date >= to) continue;
+    if (day.total > 0) activeDays++;
+    for (const [activity, m] of Object.entries(day.minutes)) {
+      minutes[activity] = (minutes[activity] ?? 0) + m;
+      total += m;
+    }
+  }
+  return { minutes, total, activeDays };
 }
 
 /**

@@ -19,6 +19,7 @@ Deploys to Vercel as-is.
 | `/work` | Featured projects as cards, then a "More projects" list |
 | `/work/[slug]` | One page per project, generated from `content/projects.ts` |
 | `/experience`, `/about`, `/contact` | What they say |
+| `/activity` | "What I've been up to": charts fed by the activity tracker (revalidates every 15 min) |
 
 ## Editing content
 
@@ -60,6 +61,6 @@ grep -rn "todo(" content/
 
 ## Activity tracker
 
-The "What I've been up to" section on /about is fed by an iPhone Shortcut that logs activities to
+The "What I've been up to" page (/activity) is fed by an iPhone Shortcut that logs activities to
 Supabase. Setup, local testing, the Shortcut, and the Scriptable widget are all in
 [docs/activity-tracker.md](docs/activity-tracker.md). Run the aggregation tests with `npm test`.

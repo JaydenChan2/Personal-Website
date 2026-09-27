@@ -20,8 +20,8 @@ export default function Home() {
   }));
 
   return (
-    <div className={`${container} flex flex-1 items-center py-12 md:py-16`}>
-      <div className="grid w-full grid-cols-12 gap-x-6 gap-y-16">
+    <div className={`${container} flex flex-1 items-center py-8 md:py-16`}>
+      <div className="grid w-full grid-cols-12 gap-x-6 gap-y-12 md:gap-y-16">
         <div className="col-span-12 md:col-span-6">
           <p className="intro-item flex flex-wrap items-center gap-x-2 gap-y-1 text-[0.9375rem] text-muted" style={d(0)}>
             <span className="live-dot relative inline-block size-2 rounded-full bg-live" aria-hidden="true" />

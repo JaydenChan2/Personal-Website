@@ -1,138 +1,53 @@
 /**
- * "What I've been up to": activity heatmap + this week's breakdown.
- * Server components only (plain SVG and divs, no client JS).
+ * "What I've been up to": this week's breakdown + one small line chart per category.
+ * Server components only (plain SVG and divs, no client JS). Hover is CSS-only.
  */
-import { activities, type ActivityCategory } from "@/content/activities";
-import type { DayTotals, Summary } from "@/lib/tracker";
+import { activities, tracker, type ActivityCategory } from "@/content/activities";
+import type { Summary } from "@/lib/tracker";
 
 /** A category's colour that follows the site's light/dark theme. */
 const colorOf = (c: ActivityCategory) => `light-dark(${c.color.light}, ${c.color.dark})`;
 
 function formatMinutes(m: number) {
-  const h = Math.floor(m / 60);
-  const min = m % 60;
-  if (h === 0) return `${min}m`;
+  const rounded = Math.round(m);
+  if (rounded < 60) return `${rounded}m`;
+  const h = Math.floor(rounded / 60);
+  const min = rounded % 60;
   return min === 0 ? `${h}h` : `${h}h ${min}m`;
+}
+
+/** Per-day averages: "45m", "1.8h". */
+function formatPerDay(m: number) {
+  const rounded = Math.round(m);
+  return rounded < 60 ? `${rounded}m` : `${(m / 60).toFixed(1).replace(/\.0$/, "")}h`;
 }
 
 // Dates are calendar days (YYYY-MM-DD), so format them in UTC to avoid shifting a day.
 const dayLabel = new Intl.DateTimeFormat("en-CA", { weekday: "short", month: "short", day: "numeric", timeZone: "UTC" });
-const monthLabel = new Intl.DateTimeFormat("en-CA", { month: "short", timeZone: "UTC" });
+const shortDate = new Intl.DateTimeFormat("en-CA", { month: "short", day: "numeric", timeZone: "UTC" });
 const parseDay = (date: string) => new Date(`${date}T00:00:00Z`);
 
-export function ActivitySection({ summary }: { summary: Summary | null }) {
-  return (
-    <section aria-labelledby="activity" className="mt-20 md:mt-28">
-      <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
-        <h2 id="activity" className="text-2xl tracking-tight">
-          What I&rsquo;ve been up to
-        </h2>
-        <p className="label">Logged from my phone, updated every 15 minutes</p>
-      </div>
-
-      {!summary ? (
-        <p className="mt-6 border-t border-line pt-6 text-muted">This is taking a break right now. Check back later.</p>
-      ) : (
-        <div className="mt-6 grid gap-x-12 gap-y-10 border-t border-line pt-8 md:grid-cols-12">
-          <div className="md:col-span-7">
-            <Heatmap days={summary.days} />
-            {!summary.hasData && (
-              <p className="mt-4 text-muted">I&rsquo;ve only just started tracking this. Check back in a week or two.</p>
-            )}
-          </div>
-          <div className="md:col-span-5">
-            <WeekBreakdown summary={summary} />
-          </div>
-        </div>
-      )}
-    </section>
-  );
-}
-
-/* ------------------------------------------------------------------
-   Heatmap: one column per week (Mon at the top), shaded by total time.
-   ------------------------------------------------------------------ */
-
-const CELL = 12;
-const GAP = 3;
-const STEP = CELL + GAP;
-const LEFT = 26; // room for weekday labels
-const TOP = 16; // room for month labels
-/** Minutes at which each shade starts (level 1–4). Fixed, so shades mean the same thing every week. */
-const LEVELS = [1, 60, 150, 300];
-const SHADE = [0, 28, 52, 76, 100]; // % of the accent mixed into the empty-cell colour
-
-const levelOf = (minutes: number) => LEVELS.filter((t) => minutes >= t).length;
-
-function Heatmap({ days }: { days: DayTotals[] }) {
-  const weeks = Math.ceil(days.length / 7);
-  const width = LEFT + weeks * STEP - GAP;
-  const height = TOP + 7 * STEP - GAP;
-  const activeDays = days.filter((d) => d.total > 0);
-  const totalMinutes = activeDays.reduce((sum, d) => sum + d.total, 0);
-
-  // Month label above the first column of each new month.
-  const months: { x: number; label: string }[] = [];
-  for (let w = 0; w < weeks; w++) {
-    const monday = parseDay(days[w * 7].date);
-    const prev = w > 0 ? parseDay(days[(w - 1) * 7].date) : null;
-    if (!prev || prev.getUTCMonth() !== monday.getUTCMonth()) {
-      const x = LEFT + w * STEP;
-      if (months.length && x - months[months.length - 1].x < 3 * STEP) months.pop(); // avoid overlap
-      months.push({ x, label: monthLabel.format(monday) });
-    }
+export function ActivityContent({ summary }: { summary: Summary | null }) {
+  if (!summary) {
+    return <p className="border-t border-line pt-6 text-muted">This is taking a break right now. Check back later.</p>;
   }
-
+  if (!summary.hasData) {
+    return (
+      <div className="border-t border-line pt-6">
+        <p className="text-lg">Nothing logged yet.</p>
+        <p className="mt-1 text-muted">I&rsquo;ve only just started tracking this. Check back in a week or two.</p>
+      </div>
+    );
+  }
   return (
-    <figure>
-      <svg
-        viewBox={`0 0 ${width} ${height}`}
-        width={width * 1.75}
-        className="h-auto max-w-full"
-        role="img"
-        aria-label={`Activity heatmap for the last ${weeks} weeks: ${formatMinutes(totalMinutes)} logged across ${activeDays.length} days.`}
-      >
-        <g fontSize="8" fill="var(--muted)">
-          {months.map((m) => (
-            <text key={m.x} x={m.x} y={9}>
-              {m.label}
-            </text>
-          ))}
-          {["Mon", "Wed", "Fri"].map((d, i) => (
-            <text key={d} x={0} y={TOP + i * 2 * STEP + CELL - 3}>
-              {d}
-            </text>
-          ))}
-        </g>
-        {days.map((day, i) => {
-          const level = levelOf(day.total);
-          return (
-            <rect
-              key={day.date}
-              x={LEFT + Math.floor(i / 7) * STEP}
-              y={TOP + (i % 7) * STEP}
-              width={CELL}
-              height={CELL}
-              rx={2.5}
-              style={{ fill: `color-mix(in srgb, var(--accent) ${SHADE[level]}%, var(--sunken))` }}
-            >
-              <title>{`${dayLabel.format(parseDay(day.date))}: ${day.total ? formatMinutes(day.total) : "nothing logged"}`}</title>
-            </rect>
-          );
-        })}
-      </svg>
-      <figcaption className="label mt-3 flex items-center gap-1.5" aria-hidden="true">
-        Less
-        {SHADE.map((s) => (
-          <span
-            key={s}
-            className="inline-block size-2.5 rounded-[2px]"
-            style={{ background: `color-mix(in srgb, var(--accent) ${s}%, var(--sunken))` }}
-          />
-        ))}
-        More
-      </figcaption>
-    </figure>
+    <div className="grid gap-x-12 gap-y-12 border-t border-line pt-8 md:grid-cols-12">
+      <section aria-labelledby="this-week" className="md:col-span-4">
+        <WeekBreakdown summary={summary} />
+      </section>
+      <section aria-label="Time per day by category" className="md:col-span-8">
+        <CategoryCharts summary={summary} />
+      </section>
+    </div>
   );
 }
 
@@ -148,8 +63,10 @@ function WeekBreakdown({ summary }: { summary: Summary }) {
 
   return (
     <div>
-      <h3 className="label">This week</h3>
-      <p className="mt-1 text-lg leading-snug">{summary.sentence.replace(/^This week: /, "").replace(/^./, (ch) => ch.toUpperCase())}</p>
+      <h2 id="this-week" className="label">This week</h2>
+      <p className="mt-1 text-lg leading-snug">
+        {summary.sentence.replace(/^This week: /, "").replace(/^./, (ch) => ch.toUpperCase())}
+      </p>
 
       {rows.length > 0 && (
         <>
@@ -170,5 +87,208 @@ function WeekBreakdown({ summary }: { summary: Summary }) {
         </>
       )}
     </div>
+  );
+}
+
+/* ------------------------------------------------------------------
+   Small multiples: one line chart per category, all on the same scale,
+   covering the last few weeks. Dashed = last week's daily average,
+   thin coloured = this week's average so far.
+   ------------------------------------------------------------------ */
+
+const W = 320;
+const H = 132;
+const PAD = { left: 28, right: 10, top: 10, bottom: 20 };
+const PLOT_W = W - PAD.left - PAD.right;
+const PLOT_H = H - PAD.top - PAD.bottom;
+
+/** Round the y-axis top up to a friendly number of hours. */
+function niceMaxHours(maxMinutes: number) {
+  const hours = maxMinutes / 60;
+  return [1, 2, 3, 4, 6, 8, 10, 12, 16, 24].find((n) => n >= hours) ?? Math.ceil(hours);
+}
+
+function CategoryCharts({ summary }: { summary: Summary }) {
+  const slots = tracker.chartWeeks * 7;
+  // Chart window: the last `chartWeeks` Monday-to-Sunday weeks, ending with this week.
+  const start = summary.days.length - (7 * (tracker.chartWeeks - 1) + summary.week.daysElapsed);
+  const days = summary.days.slice(Math.max(0, start));
+  const { compare } = summary;
+
+  // One shared scale so the charts can be compared honestly.
+  let maxMinutes = 60;
+  for (const d of days) for (const m of Object.values(d.minutes)) maxMinutes = Math.max(maxMinutes, m);
+  if (compare.enabled) {
+    for (const c of activities) maxMinutes = Math.max(maxMinutes, compare.lastWeek[c.id], compare.thisWeek[c.id]);
+  }
+  const maxHours = niceMaxHours(maxMinutes);
+
+  const x = (i: number) => PAD.left + (i / (slots - 1)) * PLOT_W;
+  const y = (minutes: number) => PAD.top + PLOT_H - (minutes / (maxHours * 60)) * PLOT_H;
+  const scale = { x, y, slots, maxHours };
+
+  return (
+    <div>
+      <ul className="grid gap-x-8 gap-y-8 sm:grid-cols-2">
+        {activities.map((c) => (
+          <li key={c.id}>
+            <CategoryChart category={c} days={days} summary={summary} scale={scale} />
+          </li>
+        ))}
+      </ul>
+
+      <div className="label mt-6 flex flex-wrap items-center gap-x-5 gap-y-2" aria-hidden="true">
+        <span className="flex items-center gap-2">
+          <svg width="18" height="8"><path d="M1 6 L6 2 L11 5 L17 1" fill="none" stroke="var(--muted)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          Time per day
+        </span>
+        {compare.enabled ? (
+          <>
+            <span className="flex items-center gap-2">
+              <svg width="18" height="8"><path d="M0 4 H18" stroke="var(--muted)" strokeWidth="1.5" strokeDasharray="4 3" /></svg>
+              Last week&rsquo;s daily average
+            </span>
+            <span className="flex items-center gap-2">
+              <svg width="18" height="8"><path d="M0 4 H18" stroke="var(--muted)" strokeWidth="1.5" opacity="0.6" /></svg>
+              This week&rsquo;s average so far
+            </span>
+          </>
+        ) : (
+          <span>The weekly comparison appears once there&rsquo;s a full week of data.</span>
+        )}
+      </div>
+
+      <DataTable days={days} />
+    </div>
+  );
+}
+
+type Scale = { x: (i: number) => number; y: (m: number) => number; slots: number; maxHours: number };
+
+function CategoryChart({
+  category: c,
+  days,
+  summary,
+  scale: { x, y, slots, maxHours },
+}: {
+  category: ActivityCategory;
+  days: Summary["days"];
+  summary: Summary;
+  scale: Scale;
+}) {
+  const { compare } = summary;
+  const values = days.map((d) => d.minutes[c.id] ?? 0);
+  const last = values.length - 1;
+  const thisWeekFrom = slots - 7;
+  const lastWeekFrom = slots - 14;
+  const avgNow = compare.thisWeek[c.id];
+  const avgBefore = compare.lastWeek[c.id];
+  const delta = avgNow - avgBefore;
+
+  const line = values.map((v, i) => `${i ? "L" : "M"}${x(i).toFixed(1)} ${y(v).toFixed(1)}`).join(" ");
+  const area = `${line} L${x(last).toFixed(1)} ${y(0)} L${x(0)} ${y(0)} Z`;
+  const color = colorOf(c);
+
+  const summaryText = compare.enabled
+    ? `${c.label}: averaging ${formatPerDay(avgNow)} a day this week, compared with ${formatPerDay(avgBefore)} last week.`
+    : `${c.label}: averaging ${formatPerDay(avgNow)} a day this week.`;
+
+  return (
+    <figure>
+      <figcaption className="flex items-baseline justify-between gap-3">
+        <span className="flex items-center gap-2 font-medium">
+          <span className="inline-block size-2 rounded-full" style={{ background: color }} aria-hidden="true" />
+          {c.label}
+        </span>
+        <span className="text-sm text-muted">
+          <span className="text-ink">{formatPerDay(avgNow)}</span>/day
+          {compare.enabled && (
+            <span>
+              {" · "}
+              {Math.abs(delta) < 1
+                ? "same as last week"
+                : `${delta > 0 ? "↑" : "↓"} ${formatPerDay(Math.abs(delta))} vs last week`}
+            </span>
+          )}
+        </span>
+      </figcaption>
+
+      <svg viewBox={`0 0 ${W} ${H}`} className="mt-2 h-auto w-full overflow-visible" role="img" aria-label={summaryText}>
+        {/* This week's band */}
+        <rect x={x(thisWeekFrom) - 4} y={PAD.top - 4} width={x(slots - 1) - x(thisWeekFrom) + 8} height={PLOT_H + 8} rx={4} fill="var(--sunken)" />
+
+        {/* Gridlines + y ticks (0, half, max) */}
+        <g fontSize="10" fill="var(--muted)">
+          {[0, maxHours / 2, maxHours].map((h) => (
+            <g key={h}>
+              <line x1={PAD.left} x2={W - PAD.right} y1={y(h * 60)} y2={y(h * 60)} stroke="var(--line)" strokeWidth="1" />
+              <text x={PAD.left - 6} y={y(h * 60) + 3.5} textAnchor="end">
+                {h === 0 ? "0" : `${h}h`}
+              </text>
+            </g>
+          ))}
+          {/* x labels: the Monday of each week */}
+          {Array.from({ length: slots / 7 }, (_, w) => w * 7)
+            .filter((i) => days[i])
+            .map((i) => (
+              <text key={i} x={x(i)} y={H - 5} textAnchor={i === 0 ? "start" : "middle"}>
+                {i === slots - 7 ? "This wk" : shortDate.format(parseDay(days[i].date))}
+              </text>
+            ))}
+        </g>
+
+        {/* Averages */}
+        {compare.enabled && (
+          <g>
+            <line x1={x(lastWeekFrom)} x2={x(slots - 1)} y1={y(avgBefore)} y2={y(avgBefore)} stroke="var(--muted)" strokeWidth="1.5" strokeDasharray="4 3" />
+            <line x1={x(thisWeekFrom)} x2={x(slots - 1)} y1={y(avgNow)} y2={y(avgNow)} style={{ stroke: color }} strokeWidth="1.5" opacity="0.6" />
+          </g>
+        )}
+
+        {/* The data */}
+        <path d={area} style={{ fill: color }} fillOpacity="0.1" />
+        <path d={line} fill="none" style={{ stroke: color }} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <circle cx={x(last)} cy={y(values[last])} r="4" style={{ fill: color }} stroke="var(--bg)" strokeWidth="2" />
+
+        {/* Hover: invisible full-height columns; CSS reveals the crosshair and dot, <title> gives the value */}
+        {values.map((v, i) => (
+          <g key={days[i].date} className="chart-day">
+            <rect x={x(i) - PLOT_W / (slots - 1) / 2} y={PAD.top} width={PLOT_W / (slots - 1)} height={PLOT_H} fill="transparent" />
+            <line className="chart-hover" x1={x(i)} x2={x(i)} y1={PAD.top} y2={PAD.top + PLOT_H} stroke="var(--line-strong)" strokeWidth="1" />
+            <circle className="chart-hover" cx={x(i)} cy={y(v)} r="4" style={{ fill: color }} stroke="var(--bg)" strokeWidth="2" />
+            <title>{`${c.label}, ${dayLabel.format(parseDay(days[i].date))}: ${v ? formatMinutes(v) : "none"}`}</title>
+          </g>
+        ))}
+      </svg>
+    </figure>
+  );
+}
+
+/** The same numbers as a table, for screen readers. */
+function DataTable({ days }: { days: Summary["days"] }) {
+  return (
+    <table className="sr-only">
+      <caption>Time per day by category</caption>
+      <thead>
+        <tr>
+          <th scope="col">Day</th>
+          {activities.map((c) => (
+            <th key={c.id} scope="col">
+              {c.label}
+            </th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {days.map((d) => (
+          <tr key={d.date}>
+            <th scope="row">{dayLabel.format(parseDay(d.date))}</th>
+            {activities.map((c) => (
+              <td key={c.id}>{formatMinutes(d.minutes[c.id] ?? 0)}</td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
   );
 }

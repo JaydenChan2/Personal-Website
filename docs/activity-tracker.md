@@ -1,10 +1,10 @@
 # Activity tracker
 
-Log what you're doing from your iPhone with one tap. The site shows a heatmap and a weekly
-breakdown on the About page, and a Scriptable widget shows the week on your home screen.
+Log what you're doing from your iPhone with one tap. The site shows a line chart per category (with this week's daily average vs last week's) and a weekly
+breakdown on its own page (/activity), and a Scriptable widget shows the week on your home screen.
 
 ```
-iPhone Shortcut ──POST /api/log (x-secret)──▶ Supabase table ◀── /api/summary (cached 15 min) ──▶ About page + widget
+iPhone Shortcut ──POST /api/log (x-secret)──▶ Supabase table ◀── /api/summary (cached 15 min) ──▶ /activity page + widget
 ```
 
 Each log is a **switch**: `{"activity": "studying"}` starts studying and ends whatever was running.
@@ -17,7 +17,7 @@ Each log is a **switch**: `{"activity": "studying"}` starts studying and ends wh
 | `lib/activity-data.ts` | Server-only Supabase reads and writes (plain `fetch`, no SDK) |
 | `app/api/log/route.ts` | `POST /api/log`, used by the Shortcut |
 | `app/api/summary/route.ts` | `GET /api/summary`: public, cached, aggregates only |
-| `components/activity.tsx` | "What I've been up to" section (server-rendered SVG, no client JS) |
+| `components/activity.tsx` | "What I've been up to" section: weekly breakdown + per-category line charts (server-rendered SVG, CSS-only hover, no client JS) |
 | `scriptable/activity-widget.js` | Home screen widget |
 | `supabase/schema.sql` | Table setup |
 | `scripts/mock-supabase.mjs` | Local fake Supabase for testing |
@@ -84,7 +84,7 @@ curl -i -X POST http://localhost:3000/api/log -H "x-secret: local-dev-secret-123
 curl -s http://localhost:3000/api/summary | head -c 600
 ```
 
-Open http://localhost:3000/about to see the section. Run the mock **without** `--seed` to see the
+Open http://localhost:3000/activity to see the page. Run the mock **without** `--seed` to see the
 empty state.
 
 > **Cached data:** the summary is cached for 15 minutes, and Next.js keeps that cache in `.next/cache`
@@ -145,7 +145,7 @@ update it in Vercel (and redeploy) and in the Shortcut.
 3. Long-press the home screen → **Edit** → **Add Widget** → **Scriptable** → choose **Small** or
    **Medium** → **Add Widget**.
 4. Tap the new widget (while editing) → **Script:** *Activity* → **When Interacting:** *Run Script*
-   (or leave it, since it links to your About page).
+   (or leave it, since it opens your /activity page).
 
 It uses only the public summary, so it needs no secret. iOS decides the exact refresh timing (roughly
 every 30 minutes at best). If it can't connect, it shows the last data it loaded.

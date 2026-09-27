@@ -363,6 +363,15 @@
   }
 }
 
+/* Activity charts: CSS-only hover crosshair (the <title> inside each column gives the value). */
+.chart-hover {
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+.chart-day:hover .chart-hover {
+  opacity: 1;
+}
+
 /* Theme toggle icon: filled half flips in dark mode (CSS-driven, no hydration flash). */
 :root[data-theme="dark"] .theme-half {
   transform: rotate(180deg);
