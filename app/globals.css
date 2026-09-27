@@ -1,0 +1,374 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------
+   Tokens. Light by default; dark follows the OS unless the visitor
+   picks one with the toggle (stored as data-theme on <html>).
+   ------------------------------------------------------------------ */
+:root {
+  --bg: #fbfbfa;
+  --raised: #ffffff;
+  --sunken: #f1f1ef;
+  --ink: #111112;
+  --muted: #62626a;
+  --line: #e6e6e3;
+  --line-strong: #cfcfcb;
+  --accent: #2340ff;
+  --accent-ink: #ffffff;
+  --live: #17803f;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d0d0f;
+    --raised: #151518;
+    --sunken: #18181b;
+    --ink: #ededee;
+    --muted: #9d9da6;
+    --line: #25252a;
+    --line-strong: #3a3a41;
+    --accent: #8394ff;
+    --accent-ink: #0d0d0f;
+    --live: #3ccf7a;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #0d0d0f;
+  --raised: #151518;
+  --sunken: #18181b;
+  --ink: #ededee;
+  --muted: #9d9da6;
+  --line: #25252a;
+  --line-strong: #3a3a41;
+  --accent: #8394ff;
+  --accent-ink: #0d0d0f;
+  --live: #3ccf7a;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-raised: var(--raised);
+  --color-sunken: var(--sunken);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-live: var(--live);
+
+  --font-sans: var(--font-schibsted), ui-sans-serif, system-ui, sans-serif;
+
+  --text-display: clamp(3.25rem, 1.4rem + 7.5vw, 7rem);
+  --text-display--line-height: 0.92;
+  --text-display--letter-spacing: -0.045em;
+  --text-title: clamp(2.5rem, 1.6rem + 3.6vw, 4.5rem);
+  --text-title--line-height: 0.95;
+  --text-title--letter-spacing: -0.035em;
+  --text-lede: clamp(1.1875rem, 1.05rem + 0.55vw, 1.5rem);
+  --text-lede--line-height: 1.4;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer base {
+  html {
+    background: var(--bg);
+    color: var(--ink);
+    -webkit-text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+    scrollbar-gutter: stable;
+  }
+  body {
+    font-family: var(--font-sans);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+  }
+  ::selection {
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 3px;
+  }
+  h1,
+  h2,
+  h3 {
+    font-weight: 500;
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+}
+
+@layer components {
+  /* Text link: an underline that draws in from the left on hover. */
+  .link {
+    background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
+    transition: background-size 320ms var(--ease-out-expo);
+    padding-bottom: 1px;
+  }
+  .link:hover,
+  .link:focus-visible {
+    background-size: 100% 1px;
+  }
+  /* Same, but underlined at rest (used in body copy). */
+  .link-u {
+    background:
+      linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat,
+      linear-gradient(var(--line-strong), var(--line-strong)) 0 100% / 100% 1px no-repeat;
+    transition: background-size 320ms var(--ease-out-expo);
+    padding-bottom: 1px;
+  }
+  .link-u:hover,
+  .link-u:focus-visible {
+    background-size:
+      100% 1px,
+      100% 1px;
+  }
+
+  /* Small section label: sentence case, muted. Deliberately not mono or all-caps. */
+  .label {
+    font-size: 0.875rem;
+    line-height: 1.4;
+    color: var(--muted);
+  }
+
+  /* Placeholder chip. Loud on purpose so it can't ship unnoticed. */
+  .todo {
+    display: inline;
+    font-size: 0.8125rem;
+    line-height: 1.8;
+    color: #b42318;
+    background: #fef3f2;
+    outline: 1px dashed #b42318;
+    outline-offset: -1px;
+    padding: 0.15em 0.45em;
+    border-radius: 3px;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+  }
+
+  /*
+   * Detection box: four corner brackets that snap onto whatever is hovered,
+   * like a bounding box from an object detector. Put .detect on a relative
+   * parent and <span class="detect-box" data-label="…"> inside it.
+   */
+  .detect-box {
+    position: absolute;
+    inset: -6px;
+    pointer-events: none;
+    opacity: 0;
+    transform: scale(1.04);
+    transition:
+      opacity 200ms ease,
+      transform 380ms var(--ease-out-expo);
+    --c: var(--accent);
+    --l: 14px;
+    --w: 1.5px;
+    background:
+      linear-gradient(var(--c), var(--c)) top left / var(--l) var(--w),
+      linear-gradient(var(--c), var(--c)) top left / var(--w) var(--l),
+      linear-gradient(var(--c), var(--c)) top right / var(--l) var(--w),
+      linear-gradient(var(--c), var(--c)) top right / var(--w) var(--l),
+      linear-gradient(var(--c), var(--c)) bottom left / var(--l) var(--w),
+      linear-gradient(var(--c), var(--c)) bottom left / var(--w) var(--l),
+      linear-gradient(var(--c), var(--c)) bottom right / var(--l) var(--w),
+      linear-gradient(var(--c), var(--c)) bottom right / var(--w) var(--l);
+    background-repeat: no-repeat;
+    z-index: 2;
+  }
+  .detect-box[data-label]::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 0;
+    bottom: 100%;
+    margin-bottom: 4px;
+    padding: 2px 7px;
+    font-size: 0.75rem;
+    line-height: 1.4;
+    white-space: nowrap;
+    color: var(--accent-ink);
+    background: var(--accent);
+    border-radius: 3px;
+    transform: translateY(4px);
+    transition: transform 380ms var(--ease-out-expo);
+  }
+  /* Variant for boxes inside a clipped frame: inset, label tucked inside the top-left corner. */
+  .detect-box.inside {
+    inset: 12px;
+  }
+  .detect-box.inside::before {
+    bottom: auto;
+    top: 8px;
+    left: 8px;
+    margin: 0;
+  }
+  .detect:hover .detect-box,
+  .detect:focus-within .detect-box,
+  .detect[data-active="true"] .detect-box {
+    opacity: 1;
+    transform: scale(1);
+  }
+  .detect:hover .detect-box::before,
+  .detect:focus-within .detect-box::before,
+  .detect[data-active="true"] .detect-box::before {
+    transform: translateY(0);
+  }
+}
+
+/* ------------------------------------------------------------------
+   Motion. Everything below is skipped for prefers-reduced-motion.
+   ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: no-preference) {
+  /*
+   * First-load entrance. An inline script in <head> sets data-intro on <html>
+   * only on the first page view of a session, then removes it, so this plays
+   * once. Each .intro-item sets its own --d delay; longest delay + duration
+   * stays under 600ms. Starts at partial opacity so text is readable at once.
+   */
+  html[data-intro] .intro-item {
+    animation: intro 360ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    animation-delay: var(--d, 0ms);
+  }
+
+  /* The "currently" dot breathes. */
+  .live-dot::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: inherit;
+    animation: ping 2.4s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+
+  /* Detection box that re-mounts on change (home preview) snaps in. */
+  .detect-box.snap {
+    animation: snap 520ms var(--ease-out-expo) both;
+  }
+  .detect-box.snap::before {
+    animation: tag-in 520ms var(--ease-out-expo) both;
+  }
+}
+
+/*
+ * Cursor field: a dot grid that lights up around the pointer, plus a
+ * detection-box reticle that trails it. Fixed behind all content.
+ * Only switched on by JS for hover-capable pointers without reduced motion.
+ */
+.cursor-field {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 400ms ease;
+  --dot: color-mix(in srgb, var(--muted) 38%, transparent);
+}
+.cursor-field[data-state="on"],
+.cursor-field[data-state="idle"] {
+  opacity: 1;
+}
+.cursor-dots {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(var(--dot) 1px, transparent 1.5px);
+  background-size: 24px 24px;
+  background-position: 12px 12px;
+  -webkit-mask-image: radial-gradient(220px circle at var(--mx, -999px) var(--my, -999px), #000 0%, rgb(0 0 0 / 0.45) 45%, transparent 100%);
+  mask-image: radial-gradient(220px circle at var(--mx, -999px) var(--my, -999px), #000 0%, rgb(0 0 0 / 0.45) 45%, transparent 100%);
+}
+.cursor-box {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 52px;
+  height: 52px;
+  margin: -26px 0 0 -26px;
+  will-change: transform;
+  --c: color-mix(in srgb, var(--accent) 70%, transparent);
+  --l: 11px;
+  --w: 1.5px;
+  background:
+    linear-gradient(var(--c), var(--c)) top left / var(--l) var(--w),
+    linear-gradient(var(--c), var(--c)) top left / var(--w) var(--l),
+    linear-gradient(var(--c), var(--c)) top right / var(--l) var(--w),
+    linear-gradient(var(--c), var(--c)) top right / var(--w) var(--l),
+    linear-gradient(var(--c), var(--c)) bottom left / var(--l) var(--w),
+    linear-gradient(var(--c), var(--c)) bottom left / var(--w) var(--l),
+    linear-gradient(var(--c), var(--c)) bottom right / var(--l) var(--w),
+    linear-gradient(var(--c), var(--c)) bottom right / var(--w) var(--l);
+  background-repeat: no-repeat;
+}
+/* Over links and buttons the reticle steps aside; their own hover states take over. */
+.cursor-field[data-state="idle"] .cursor-box {
+  opacity: 0;
+  scale: 0.6;
+}
+.cursor-field .cursor-box {
+  transition:
+    opacity 250ms ease,
+    scale 350ms var(--ease-out-expo);
+}
+/* Press: the box "locks on". */
+.cursor-field[data-press] .cursor-box {
+  scale: 0.72;
+}
+
+@keyframes intro {
+  from {
+    opacity: 0.15;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes snap {
+  from {
+    opacity: 0;
+    transform: scale(1.06);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes tag-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  80%,
+  100% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+/* Theme toggle icon: filled half flips in dark mode (CSS-driven, no hydration flash). */
+:root[data-theme="dark"] .theme-half {
+  transform: rotate(180deg);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .theme-half {
+    transform: rotate(180deg);
+  }
+}
