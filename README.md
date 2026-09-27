@@ -57,3 +57,9 @@ grep -rn "todo(" content/
   a session only. A tiny script in `app/layout.tsx` sets `data-intro` on `<html>`; tweak delays via
   the `--d` style on each `.intro-item`. Disabled under `prefers-reduced-motion`.
 - **OG image:** `app/opengraph-image.tsx`, rendered at build time with the fonts in `app/_og/`.
+
+## Activity tracker
+
+The "What I've been up to" section on /about is fed by an iPhone Shortcut that logs activities to
+Supabase. Setup, local testing, the Shortcut, and the Scriptable widget are all in
+[docs/activity-tracker.md](docs/activity-tracker.md). Run the aggregation tests with `npm test`.
