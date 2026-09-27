@@ -136,12 +136,6 @@ export const minorProjects: MinorProject[] = [
     stack: ["Python", "Flask", "Pandas"],
     href: "https://github.com/JaydenChan2/Stock-Prediction",
   },
-  {
-    title: "Roomies",
-    summary: "Roommate matching based on personality, habits and schedules. In development.",
-    stack: ["In progress"],
-    href: "https://github.com/JaydenChan2/Roomies",
-  },
 ];
 
 export const featuredProjects = projects.filter((p) => p.featured !== false);
