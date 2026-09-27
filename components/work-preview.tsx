@@ -48,7 +48,7 @@ export function WorkPreview({ items }: { items: PreviewItem[] }) {
               href={`/work/${item.slug}`}
               onMouseEnter={() => setActive(i)}
               onFocus={() => setActive(i)}
-              className="group flex items-baseline gap-4 py-3.5"
+              className="group flex items-baseline gap-4 py-4"
             >
               <span
                 className={`font-medium transition-[color,transform] duration-300 ease-out group-hover:translate-x-1 motion-reduce:transform-none ${
@@ -57,7 +57,6 @@ export function WorkPreview({ items }: { items: PreviewItem[] }) {
               >
                 {item.title}
               </span>
-              <span className="label min-w-0 flex-1 truncate max-sm:hidden">{item.summary}</span>
               <span
                 aria-hidden="true"
                 className="ml-auto text-muted transition-transform duration-300 ease-out group-hover:translate-x-1 group-hover:text-accent motion-reduce:transform-none"

@@ -30,12 +30,12 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   return (
     <>
       <article className={`${container} pt-8 md:pt-12`}>
-        <div className="stagger">
+        <div>
           <Link href="/work" className="label link inline-block hover:text-ink">
             ← All work
           </Link>
 
-          <header className="mt-8 grid gap-x-8 gap-y-8 md:grid-cols-12">
+          <header className="intro-item mt-10 grid gap-x-8 gap-y-8 md:grid-cols-12">
             <div className="md:col-span-8">
               <p className="label">{p.kind}</p>
               <h1 className="mt-2 text-title">{p.title}</h1>
@@ -82,13 +82,13 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
           </header>
 
           {p.cover && (
-            <div className="mt-12 overflow-hidden rounded-md ring-1 ring-line">
+            <div className="intro-item mt-14 overflow-hidden rounded-md ring-1 ring-line" style={{ "--d": "80ms" } as React.CSSProperties}>
               <Cover project={p} sizes="(min-width: 1152px) 1088px, 100vw" priority className="aspect-[16/10]" />
             </div>
           )}
         </div>
 
-        <div className="mt-16 grid gap-x-8 gap-y-14 md:grid-cols-12">
+        <div className="mt-20 grid gap-x-8 gap-y-16 md:grid-cols-12">
           <Section title="The problem">
             <T value={p.problem} />
           </Section>
@@ -96,7 +96,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
             <T value={p.built} />
           </Section>
 
-          <section className="reveal md:col-span-10 md:col-start-3">
+          <section className="md:col-span-10 md:col-start-3">
             <div className="rounded-md bg-sunken p-6 sm:p-8">
               <h2 className="label">A decision worth explaining</h2>
               <p className="mt-2 text-2xl font-medium leading-tight tracking-tight">{p.decision.title}</p>
@@ -120,7 +120,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
           )}
 
           {p.video && (
-            <section className="reveal md:col-span-10 md:col-start-3">
+            <section className="md:col-span-10 md:col-start-3">
               <h2 className="label mb-3">Demo</h2>
               <div className="overflow-hidden rounded-md ring-1 ring-line">
                 <VideoPoster id={p.video.id} title={p.video.title} designed={!p.cover} />
@@ -129,7 +129,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
           )}
 
           {p.gallery?.map((g) => (
-            <figure key={g.src} className="reveal md:col-span-10 md:col-start-3">
+            <figure key={g.src} className="md:col-span-10 md:col-start-3">
               <div className="overflow-hidden rounded-md ring-1 ring-line">
                 <Image src={g.src} alt={g.alt} width={g.width} height={g.height} sizes="(min-width: 1152px) 900px, 100vw" className="h-auto w-full" />
               </div>
@@ -157,7 +157,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="reveal grid gap-x-8 gap-y-3 md:col-span-10 md:col-start-3 md:grid-cols-10">
+    <section className="grid gap-x-8 gap-y-3 md:col-span-10 md:col-start-3 md:grid-cols-10">
       <h2 className="label md:col-span-3 md:pt-1">{title}</h2>
       <div className="max-w-[62ch] text-lg leading-relaxed md:col-span-7">{children}</div>
     </section>

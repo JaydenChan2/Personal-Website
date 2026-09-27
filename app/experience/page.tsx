@@ -14,18 +14,18 @@ export default function ExperiencePage() {
   return (
     <>
       <div className={`${container} pt-10 md:pt-16`}>
-        <div className="stagger">
+        <div>
           <PageTitle title="Experience">
             <p>Internships, a student design team, client work, and the club I started in high school.</p>
           </PageTitle>
         </div>
 
-        <ol className="stagger relative mt-14 md:mt-20">
+        <ol className="relative mt-16 md:mt-24">
           {experience.map((r) => (
             <li
               key={r.id}
               id={r.id}
-              className="group relative grid scroll-mt-24 gap-x-8 gap-y-3 border-t border-line py-8 target:bg-sunken/60 md:grid-cols-12"
+              className="group relative grid scroll-mt-24 gap-x-8 gap-y-3 border-t border-line py-10 md:grid-cols-12"
             >
               <div className="md:col-span-3">
                 <p className="flex items-center gap-2 text-[0.9375rem] text-muted">
@@ -54,7 +54,7 @@ export default function ExperiencePage() {
                     )}
                   </span>
                 </h2>
-                <ul className="mt-4 max-w-[68ch] space-y-2 text-muted">
+                <ul className="mt-5 max-w-[66ch] space-y-3 text-muted">
                   {r.points.map((pt) => (
                     <li key={pt} className="flex gap-3">
                       <span aria-hidden="true" className="mt-[0.72em] h-px w-3 shrink-0 bg-line-strong" />
@@ -72,7 +72,7 @@ export default function ExperiencePage() {
           ))}
         </ol>
 
-        <section aria-labelledby="edu" className="reveal grid gap-x-8 gap-y-3 border-t border-line py-8 md:grid-cols-12">
+        <section aria-labelledby="edu" className="grid gap-x-8 gap-y-3 border-t border-line py-8 md:grid-cols-12">
           <h2 id="edu" className="label md:col-span-3 md:pt-1.5">
             Education
           </h2>

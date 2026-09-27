@@ -19,7 +19,7 @@ export default function AboutPage() {
   return (
     <>
       <div className={`${container} pt-10 md:pt-16`}>
-        <div className="stagger grid gap-x-10 gap-y-10 md:grid-cols-12">
+        <div className="grid gap-x-10 gap-y-10 md:grid-cols-12">
           <div className="md:col-span-7">
             <PageTitle title="About" />
             {/* Draft written from facts on the old site and resume. Rewrite it in your own voice. */}
@@ -58,12 +58,12 @@ export default function AboutPage() {
         </div>
 
         <section aria-labelledby="offline" className="mt-20 md:mt-28">
-          <h2 id="offline" className="reveal text-2xl tracking-tight">
+          <h2 id="offline" className="text-2xl tracking-tight">
             Away from the keyboard
           </h2>
           <ul className="mt-6 grid gap-6 border-t border-line pt-6 sm:grid-cols-3">
             {offline.map((o) => (
-              <li key={o.title} className="reveal">
+              <li key={o.title} >
                 <p className="font-medium">{o.title}</p>
                 <p className="mt-1 text-muted">{o.body}</p>
               </li>

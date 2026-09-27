@@ -21,12 +21,12 @@ export default function WorkPage() {
 
   return (
     <>
-      <div className={`${container} stagger pt-10 md:pt-16`}>
+      <div className={`${container} pt-10 md:pt-16`}>
         <PageTitle title="Work">
           <p>Things I&rsquo;ve built for clients, at hackathons and for myself. Click into any project for the full story.</p>
         </PageTitle>
 
-        <ul className="mt-12 grid gap-x-8 gap-y-14 md:mt-16 md:grid-cols-2">
+        <ul className="mt-14 grid gap-x-10 gap-y-20 md:mt-20 md:grid-cols-2">
           <li className="md:col-span-2">
             <ProjectCard project={first} wide />
           </li>
@@ -37,13 +37,13 @@ export default function WorkPage() {
           ))}
         </ul>
 
-        <section aria-labelledby="also" className="mt-24">
+        <section aria-labelledby="also" className="mt-28">
           <h2 id="also" className="text-2xl tracking-tight">
             More projects
           </h2>
           <ul className="mt-6 border-t border-line">
             {more.map((p) => (
-              <li key={p.title} className="grid gap-x-8 gap-y-1 border-b border-line py-5 md:grid-cols-[16rem_1fr_auto]">
+              <li key={p.title} className="grid gap-x-8 gap-y-1 border-b border-line py-6 md:grid-cols-[16rem_1fr_auto]">
                 <p className="font-medium">
                   {p.internal ? (
                     <Link href={p.href as string} className="link-u">

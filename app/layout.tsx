@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Schibsted_Grotesk } from "next/font/google";
+import { CursorField } from "@/components/cursor-field";
 import { Nav } from "@/components/nav";
 import { site } from "@/content/site";
 import "./globals.css";
@@ -33,8 +34,9 @@ export const viewport: Viewport = {
   ],
 };
 
-// Runs before first paint so a saved theme never flashes the wrong colours.
-const themeScript = `try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}`;
+// Runs before first paint: applies a saved theme (no flash), and flags the first page
+// view of the session so the entrance animation plays once, then clears the flag.
+const headScript = `(function(){var d=document.documentElement;try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")d.dataset.theme=t}catch(e){}try{if(!sessionStorage.getItem("intro")&&!matchMedia("(prefers-reduced-motion: reduce)").matches){sessionStorage.setItem("intro","1");d.dataset.intro="";setTimeout(function(){delete d.dataset.intro},800)}}catch(e){}})()`;
 
 const personLd = {
   "@context": "https://schema.org",
@@ -53,7 +55,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={sans.variable} suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <script dangerouslySetInnerHTML={{ __html: headScript }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personLd) }} />
       </head>
       <body className="flex min-h-svh flex-col">
@@ -63,6 +65,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           Skip to content
         </a>
+        <CursorField />
         <Nav />
         <main id="main" className="flex flex-1 flex-col">
           {children}

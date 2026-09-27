@@ -62,8 +62,8 @@
 
   --font-sans: var(--font-schibsted), ui-sans-serif, system-ui, sans-serif;
 
-  --text-display: clamp(3.5rem, 1.2rem + 10vw, 8.75rem);
-  --text-display--line-height: 0.88;
+  --text-display: clamp(3.25rem, 1.4rem + 7.5vw, 7rem);
+  --text-display--line-height: 0.92;
   --text-display--letter-spacing: -0.045em;
   --text-title: clamp(2.5rem, 1.6rem + 3.6vw, 4.5rem);
   --text-title--line-height: 0.95;
@@ -83,7 +83,6 @@
     scrollbar-gutter: stable;
   }
   body {
-    background: var(--bg);
     font-family: var(--font-sans);
     font-size: 1.0625rem;
     line-height: 1.6;
@@ -228,24 +227,15 @@
    Motion. Everything below is skipped for prefers-reduced-motion.
    ------------------------------------------------------------------ */
 @media (prefers-reduced-motion: no-preference) {
-  /* Page enter: each direct child of .stagger rises in, one after another. */
-  .stagger > * {
-    animation: rise 700ms var(--ease-out-expo) both;
-    animation-delay: calc(var(--i, 0) * 70ms + 40ms);
-  }
-  .stagger > :nth-child(2) { --i: 1; }
-  .stagger > :nth-child(3) { --i: 2; }
-  .stagger > :nth-child(4) { --i: 3; }
-  .stagger > :nth-child(5) { --i: 4; }
-  .stagger > :nth-child(6) { --i: 5; }
-  .stagger > :nth-child(7) { --i: 6; }
-  .stagger > :nth-child(n + 8) { --i: 7; }
-
-  /* Headline: each word slides up out of its own mask. */
-  .word-mask > span {
-    display: inline-block;
-    animation: word-up 900ms var(--ease-out-expo) both;
-    animation-delay: calc(var(--w, 0) * 90ms + 80ms);
+  /*
+   * First-load entrance. An inline script in <head> sets data-intro on <html>
+   * only on the first page view of a session, then removes it, so this plays
+   * once. Each .intro-item sets its own --d delay; longest delay + duration
+   * stays under 600ms. Starts at partial opacity so text is readable at once.
+   */
+  html[data-intro] .intro-item {
+    animation: intro 360ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    animation-delay: var(--d, 0ms);
   }
 
   /* The "currently" dot breathes. */
@@ -263,31 +253,78 @@
     animation: snap 520ms var(--ease-out-expo) both;
   }
   .detect-box.snap::before {
-    animation: rise 520ms var(--ease-out-expo) both;
-  }
-
-  /* Scroll reveal, CSS-only where supported (no JS, no layout cost). */
-  @supports (animation-timeline: view()) {
-    .reveal {
-      animation: rise linear both;
-      animation-timeline: view();
-      animation-range: entry 0% entry 35%;
-    }
+    animation: tag-in 520ms var(--ease-out-expo) both;
   }
 }
 
-.word-mask {
-  display: inline-block;
-  overflow: hidden;
-  vertical-align: top;
-  padding-bottom: 0.1em;
-  margin-bottom: -0.1em;
+/*
+ * Cursor field: a dot grid that lights up around the pointer, plus a
+ * detection-box reticle that trails it. Fixed behind all content.
+ * Only switched on by JS for hover-capable pointers without reduced motion.
+ */
+.cursor-field {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 400ms ease;
+  --dot: color-mix(in srgb, var(--muted) 38%, transparent);
+}
+.cursor-field[data-state="on"],
+.cursor-field[data-state="idle"] {
+  opacity: 1;
+}
+.cursor-dots {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(var(--dot) 1px, transparent 1.5px);
+  background-size: 24px 24px;
+  background-position: 12px 12px;
+  -webkit-mask-image: radial-gradient(220px circle at var(--mx, -999px) var(--my, -999px), #000 0%, rgb(0 0 0 / 0.45) 45%, transparent 100%);
+  mask-image: radial-gradient(220px circle at var(--mx, -999px) var(--my, -999px), #000 0%, rgb(0 0 0 / 0.45) 45%, transparent 100%);
+}
+.cursor-box {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 52px;
+  height: 52px;
+  margin: -26px 0 0 -26px;
+  will-change: transform;
+  --c: color-mix(in srgb, var(--accent) 70%, transparent);
+  --l: 11px;
+  --w: 1.5px;
+  background:
+    linear-gradient(var(--c), var(--c)) top left / var(--l) var(--w),
+    linear-gradient(var(--c), var(--c)) top left / var(--w) var(--l),
+    linear-gradient(var(--c), var(--c)) top right / var(--l) var(--w),
+    linear-gradient(var(--c), var(--c)) top right / var(--w) var(--l),
+    linear-gradient(var(--c), var(--c)) bottom left / var(--l) var(--w),
+    linear-gradient(var(--c), var(--c)) bottom left / var(--w) var(--l),
+    linear-gradient(var(--c), var(--c)) bottom right / var(--l) var(--w),
+    linear-gradient(var(--c), var(--c)) bottom right / var(--w) var(--l);
+  background-repeat: no-repeat;
+}
+/* Over links and buttons the reticle steps aside; their own hover states take over. */
+.cursor-field[data-state="idle"] .cursor-box {
+  opacity: 0;
+  scale: 0.6;
+}
+.cursor-field .cursor-box {
+  transition:
+    opacity 250ms ease,
+    scale 350ms var(--ease-out-expo);
+}
+/* Press: the box "locks on". */
+.cursor-field[data-press] .cursor-box {
+  scale: 0.72;
 }
 
-@keyframes rise {
+@keyframes intro {
   from {
-    opacity: 0;
-    transform: translateY(14px);
+    opacity: 0.15;
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
@@ -304,11 +341,13 @@
     transform: scale(1);
   }
 }
-@keyframes word-up {
+@keyframes tag-in {
   from {
-    transform: translateY(105%);
+    opacity: 0;
+    transform: translateY(4px);
   }
   to {
+    opacity: 1;
     transform: none;
   }
 }

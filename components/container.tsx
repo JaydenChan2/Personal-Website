@@ -4,9 +4,13 @@ export const container = "mx-auto w-full max-w-[72rem] px-5 sm:px-8";
 /** Page heading used by every inner page. */
 export function PageTitle({ title, children }: { title: string; children?: React.ReactNode }) {
   return (
-    <header className="max-w-[46rem]">
-      <h1 className="text-title">{title}</h1>
-      {children && <div className="mt-5 text-lede text-muted">{children}</div>}
+    <header className="max-w-[44rem]">
+      <h1 className="intro-item text-title">{title}</h1>
+      {children && (
+        <div className="intro-item mt-6 text-lede text-muted" style={{ "--d": "70ms" } as React.CSSProperties}>
+          {children}
+        </div>
+      )}
     </header>
   );
 }

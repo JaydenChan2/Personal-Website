@@ -18,16 +18,18 @@ export default function ContactPage() {
   return (
     <>
       <div className={`${container} flex flex-1 flex-col justify-center py-12`}>
-        <div className="stagger max-w-[46rem]">
-          <p className="label">Contact</p>
-          <h1 className="mt-3 text-display">Say hello.</h1>
-          <p className="mt-8 max-w-[34ch] text-lede text-muted">
+        <div className="max-w-[46rem]">
+          <p className="intro-item label">Contact</p>
+          <h1 className="intro-item mt-3 text-display" style={{ "--d": "40ms" } as React.CSSProperties}>
+            Say hello.
+          </h1>
+          <p className="intro-item mt-8 max-w-[34ch] text-lede text-muted" style={{ "--d": "80ms" } as React.CSSProperties}>
             Hiring for an internship, or building something interesting? Email is the fastest way to reach me.
           </p>
-          <div className="mt-8 text-xl sm:text-2xl">
+          <div className="intro-item mt-8 text-xl sm:text-2xl" style={{ "--d": "120ms" } as React.CSSProperties}>
             <CopyEmail email={site.email} />
           </div>
-          <ul className="mt-12 border-t border-line">
+          <ul className="intro-item mt-14 border-t border-line" style={{ "--d": "160ms" } as React.CSSProperties}>
             {links.map((l) => (
               <li key={l.label} className="border-b border-line">
                 <a

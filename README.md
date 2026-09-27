@@ -51,7 +51,9 @@ grep -rn "todo(" content/
   `--live`), with light and dark versions. All text pairs pass WCAG AA.
 - **Detection box:** the corner brackets that snap onto hovered projects (`.detect` / `.detect-box` in
   `globals.css`). A nod to object detection, and the site's one signature detail.
-- **Motion:** page content staggers in, the name rises word by word, the nav pill slides between pages,
-  and project pages reveal on scroll (CSS scroll-driven, where supported). All of it is disabled under
-  `prefers-reduced-motion`.
+- **Cursor field:** a dot grid lights up around the pointer and a detection-box reticle trails it
+  (`components/cursor-field.tsx`). Mouse/trackpad only; off on touch and under reduced motion.
+- **Entrance:** hero elements fade and rise with a short stagger (under 600ms) on the first page view of
+  a session only. A tiny script in `app/layout.tsx` sets `data-intro` on `<html>`; tweak delays via
+  the `--d` style on each `.intro-item`. Disabled under `prefers-reduced-motion`.
 - **OG image:** `app/opengraph-image.tsx`, rendered at build time with the fonts in `app/_og/`.
