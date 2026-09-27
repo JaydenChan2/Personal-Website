@@ -862,11 +862,46 @@ button  { cursor: pointer; border: none; background: none; font: inherit; color:
   font-size: 0.82rem;
   color: var(--nf-red);
 }
+.episode__meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.45rem;
+  flex-shrink: 0;
+}
 .episode__date {
   font-size: 0.78rem;
   color: var(--nf-text-muted);
   white-space: nowrap;
+}
+.episode__visit {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.7rem;
+  color: var(--nf-text-dim);
+  border: 1px solid var(--nf-border);
+  border-radius: 3px;
+  padding: 0.18rem 0.55rem;
+  text-decoration: none;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 0.22s ease, transform 0.22s ease,
+              color 0.2s ease, border-color 0.2s ease;
+  white-space: nowrap;
+}
+.episode__visit svg {
+  width: 11px;
+  height: 11px;
   flex-shrink: 0;
+}
+.episode:hover .episode__visit {
+  opacity: 1;
+  transform: translateY(0);
+}
+.episode__visit:hover {
+  color: var(--nf-text);
+  border-color: rgba(229,9,20,0.6);
 }
 
 .episode__list {
