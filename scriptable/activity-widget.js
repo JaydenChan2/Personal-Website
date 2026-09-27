@@ -134,7 +134,7 @@ function baseWidget() {
   const w = new ListWidget();
   w.backgroundColor = BG;
   w.setPadding(14, 16, 14, 16);
-  w.url = `${SITE}/about#activity`;
+  w.url = `${SITE}/activity`;
   w.refreshAfterDate = new Date(Date.now() + 30 * 60 * 1000); // iOS decides exact timing
   return w;
 }

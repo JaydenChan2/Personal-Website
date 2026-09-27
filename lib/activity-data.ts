@@ -52,6 +52,7 @@ const summaryOptions = {
   weeks: tracker.weeks,
   maxSessionMs: tracker.maxSessionHours * 3600_000,
   categories: activities,
+  compareMinDays: tracker.compareMinDays,
 };
 
 /** Aggregated summary. Returns an empty summary when Supabase isn't configured (e.g. local builds). */

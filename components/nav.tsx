@@ -11,6 +11,7 @@ const items = [
   { href: "/work", label: "Work" },
   { href: "/experience", label: "Experience" },
   { href: "/about", label: "About" },
+  { href: "/activity", label: "Activity" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -36,53 +37,58 @@ export function Nav() {
 
   return (
     <header className="sticky top-0 z-40 bg-bg/80 backdrop-blur-md">
-      <nav aria-label="Primary" className={`${container} flex h-16 items-center justify-between gap-3`}>
+      {/* Phones: name + theme toggle on the first row, the links spread across a second row. */}
+      <nav
+        aria-label="Primary"
+        className={`${container} flex flex-wrap items-center justify-between gap-x-3 pt-3 sm:h-16 sm:flex-nowrap sm:pt-0`}
+      >
         <Link
           href="/"
           aria-current={pathname === "/" ? "page" : undefined}
           className="-ml-1 rounded px-1 text-[1.0625rem] font-medium tracking-tight"
         >
-          <span className="sm:hidden" aria-hidden="true">
-            JC
-          </span>
-          <span className="max-sm:sr-only">Jayden Chan</span>
+          Jayden Chan
         </Link>
 
-        <div className="flex items-center gap-1 sm:gap-3">
-          <ul ref={listRef} className="relative flex items-center text-[0.9375rem]">
-            <span
-              aria-hidden="true"
-              className="absolute inset-y-0 left-0 -z-10 rounded-full bg-sunken transition-[transform,width,opacity] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none"
-              style={{
-                width: pill?.w ?? 0,
-                transform: `translateX(${pill?.x ?? 0}px)`,
-                opacity: pill ? 1 : 0,
-              }}
-            />
-            {items.map((item) => {
-              const isActive = item === active;
-              return (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    aria-current={isActive ? "page" : undefined}
-                    className={`block rounded-full px-2.5 py-1.5 transition-colors sm:px-3.5 ${
-                      isActive ? "text-ink" : "text-muted hover:text-ink"
-                    }`}
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              );
-            })}
-            {site.resume && (
-              <li>
-                <a href={site.resume} target="_blank" rel="noreferrer" className="block px-2.5 py-1.5 text-muted hover:text-ink sm:px-3.5">
-                  Resume
-                </a>
+        <ul
+          ref={listRef}
+          className="relative order-last -mx-2 flex w-[calc(100%+1rem)] items-center justify-between py-2 text-[0.9375rem] sm:order-none sm:mx-0 sm:ml-auto sm:w-auto sm:justify-start sm:py-0"
+        >
+          <span
+            aria-hidden="true"
+            className="absolute left-0 top-2 bottom-2 -z-10 rounded-full bg-sunken transition-[transform,width,opacity] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none sm:inset-y-0"
+            style={{
+              width: pill?.w ?? 0,
+              transform: `translateX(${pill?.x ?? 0}px)`,
+              opacity: pill ? 1 : 0,
+            }}
+          />
+          {items.map((item) => {
+            const isActive = item === active;
+            return (
+              <li key={item.href}>
+                <Link
+                  href={item.href}
+                  aria-current={isActive ? "page" : undefined}
+                  className={`block rounded-full px-2 py-1.5 transition-colors sm:px-3.5 ${
+                    isActive ? "text-ink" : "text-muted hover:text-ink"
+                  }`}
+                >
+                  {item.label}
+                </Link>
               </li>
-            )}
-          </ul>
+            );
+          })}
+          {site.resume && (
+            <li>
+              <a href={site.resume} target="_blank" rel="noreferrer" className="block px-2 py-1.5 text-muted hover:text-ink sm:px-3.5">
+                Resume
+              </a>
+            </li>
+          )}
+        </ul>
+
+        <div className="sm:ml-3">
           <ThemeToggle />
         </div>
       </nav>

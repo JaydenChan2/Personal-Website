@@ -9,7 +9,7 @@ const categories = [
   { id: "badminton", phrase: "badminton", sessionNoun: ["badminton session", "badminton sessions"] },
   { id: "social", phrase: "time with friends" },
 ];
-const opts = { timeZone: "America/Toronto", weeks: 13, maxSessionMs: 4 * 3600_000, categories };
+const opts = { timeZone: "America/Toronto", weeks: 13, maxSessionMs: 4 * 3600_000, categories, compareMinDays: 3 };
 const at = (iso) => ({ created_at: iso }); // helper for readability
 const log = (activity, iso) => ({ activity, ...at(iso) });
 const day = (s, date) => s.days.find((d) => d.date === date);
@@ -104,4 +104,24 @@ test("window start reaches back one max session before the range", () => {
   const start = windowStart(NOW, opts);
   const firstDay = summarize([], NOW, opts).days[0].date; // 2026-06-29
   assert.equal(start, Date.parse(`${firstDay}T04:00:00Z`) - 4 * 3600_000); // local midnight (EDT) minus 4h
+});
+
+test("weekly comparison: averages per day, enabled only with enough data last week", () => {
+  // NOW is Wednesday → 3 days elapsed this week. Last week = Sep 14–20.
+  const lastWeekDays = ["2026-09-14", "2026-09-15", "2026-09-16"];
+  const entries = [
+    ...lastWeekDays.flatMap((d) => [log("studying", `${d}T14:00:00Z`), log("stop", `${d}T16:20:00Z`)]), // 140 min × 3
+    log("studying", "2026-09-22T14:00:00Z"), log("stop", "2026-09-22T17:00:00Z"), // 180 min this week
+  ];
+  const s = summarize(entries, NOW, opts);
+  assert.equal(s.week.daysElapsed, 3);
+  assert.equal(s.lastWeek.start, "2026-09-14");
+  assert.equal(s.lastWeek.activeDays, 3);
+  assert.equal(s.compare.enabled, true);
+  assert.equal(s.compare.lastWeek.studying, 60); // 420 / 7
+  assert.equal(s.compare.thisWeek.studying, 60); // 180 / 3
+  assert.equal(s.compare.thisWeek.badminton, 0);
+
+  const sparse = summarize(entries.slice(2), NOW, opts); // only 2 active days last week
+  assert.equal(sparse.compare.enabled, false);
 });

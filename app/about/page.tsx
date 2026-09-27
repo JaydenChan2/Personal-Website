@@ -1,14 +1,8 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { ActivitySection } from "@/components/activity";
 import { container, PageFooter, PageTitle } from "@/components/container";
-import { getSummary } from "@/lib/activity-data";
-import type { Summary } from "@/lib/tracker";
 import portrait from "@/public/me.png";
-
-// Re-render at most every 15 minutes so the activity section stays fresh (matches tracker.revalidateSeconds).
-export const revalidate = 900;
 
 export const metadata: Metadata = {
   title: "About",
@@ -21,14 +15,7 @@ const offline = [
   { title: "Anime films", body: "A long list, ranked. I Want to Eat Your Pancreas is the only 10/10." },
 ];
 
-export default async function AboutPage() {
-  let summary: Summary | null = null;
-  try {
-    summary = await getSummary();
-  } catch (err) {
-    console.error("[about] activity summary", err);
-  }
-
+export default function AboutPage() {
   return (
     <>
       <div className={`${container} pt-10 md:pt-16`}>
@@ -83,7 +70,6 @@ export default async function AboutPage() {
             ))}
           </ul>
         </section>
-        <ActivitySection summary={summary} />
       </div>
       <PageFooter />
     </>
