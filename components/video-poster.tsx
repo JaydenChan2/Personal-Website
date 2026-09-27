@@ -40,10 +40,10 @@ export function VideoPoster({
           aria-label={`Play demo: ${title}`}
         >
           {designed ? (
-            <span className="absolute inset-0 flex flex-col justify-between bg-ink p-5 text-left text-bg sm:p-8">
-              <span className="meta text-bg/70">Demo video · YouTube</span>
-              <span className="max-w-[18ch] pb-12 font-serif text-[clamp(1.75rem,1rem+3vw,3.25rem)] leading-[1.02] sm:pb-14">
-                {title.replace(/ demo video$/i, "")}, tracking a face in real time.
+            <span className="absolute inset-0 flex flex-col justify-between bg-sunken p-5 text-left sm:p-8">
+              <span className="label">Video · YouTube</span>
+              <span className="pb-12 text-[clamp(1.75rem,1rem+3vw,3.25rem)] font-medium leading-none tracking-[-0.035em] sm:pb-14">
+                {title}
               </span>
             </span>
           ) : (
@@ -56,7 +56,7 @@ export function VideoPoster({
               priority={priority}
             />
           )}
-          <span className="absolute bottom-4 left-4 inline-flex items-center gap-2 rounded-full bg-bg/90 px-4 py-2 text-sm text-ink backdrop-blur-sm transition-colors group-hover:bg-bg">
+          <span className="absolute bottom-4 left-4 inline-flex items-center gap-2 rounded-full bg-raised/95 px-4 py-2 text-sm text-ink shadow-sm ring-1 ring-line backdrop-blur-sm transition-transform duration-300 ease-out group-hover:scale-105 motion-reduce:transform-none">
             <svg viewBox="0 0 12 12" className="size-3 fill-accent" aria-hidden="true">
               <path d="M3 1.5v9l7.5-4.5z" />
             </svg>

@@ -25,7 +25,7 @@ export function ThemeToggle() {
         } catch {}
         setTheme(next);
       }}
-      className="group -m-2 grid size-10 place-items-center rounded-full text-muted transition-colors hover:text-ink"
+      className="grid size-9 place-items-center rounded-full text-muted transition-colors hover:bg-sunken hover:text-ink"
       aria-label={theme ? `Switch to ${next} theme` : "Toggle theme"}
     >
       {/* Half-filled disc: the filled half swaps sides with the theme. */}

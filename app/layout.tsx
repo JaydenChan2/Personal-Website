@@ -1,44 +1,35 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
+import { Schibsted_Grotesk } from "next/font/google";
+import { Nav } from "@/components/nav";
 import { site } from "@/content/site";
 import "./globals.css";
 
-const serif = Instrument_Serif({
+const sans = Schibsted_Grotesk({
   subsets: ["latin"],
-  weight: "400",
-  style: ["normal", "italic"],
-  variable: "--font-instrument-serif",
+  variable: "--font-schibsted",
   display: "swap",
-});
-const sans = Geist({ subsets: ["latin"], variable: "--font-geist", display: "swap" });
-const mono = Geist_Mono({
-  subsets: ["latin"],
-  variable: "--font-geist-mono",
-  display: "swap",
-  preload: false,
 });
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
-  title: site.title,
+  title: { default: `${site.name} · Software & ML`, template: `%s · ${site.name}` },
   description: site.description,
-  alternates: { canonical: "/" },
   authors: [{ name: site.name, url: site.url }],
   openGraph: {
     type: "website",
     url: site.url,
     siteName: site.name,
-    title: site.title,
+    title: `${site.name} · Software & ML`,
     description: site.description,
     locale: "en_CA",
   },
-  twitter: { card: "summary_large_image", title: site.title, description: site.description },
+  twitter: { card: "summary_large_image" },
 };
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f6f4ef" },
-    { media: "(prefers-color-scheme: dark)", color: "#121210" },
+    { media: "(prefers-color-scheme: light)", color: "#fbfbfa" },
+    { media: "(prefers-color-scheme: dark)", color: "#0d0d0f" },
   ],
 };
 
@@ -60,19 +51,23 @@ const personLd = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html
-      lang="en"
-      className={`${serif.variable} ${sans.variable} ${mono.variable}`}
-      suppressHydrationWarning
-    >
+    <html lang="en" className={sans.variable} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(personLd) }}
-        />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personLd) }} />
       </head>
-      <body>{children}</body>
+      <body className="flex min-h-svh flex-col">
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-3 focus:z-50 focus:rounded focus:bg-raised focus:px-3 focus:py-2"
+        >
+          Skip to content
+        </a>
+        <Nav />
+        <main id="main" className="flex flex-1 flex-col">
+          {children}
+        </main>
+      </body>
     </html>
   );
 }
