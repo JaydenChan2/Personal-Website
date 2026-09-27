@@ -1,0 +1,228 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------
+   Tokens. Light is the default; dark follows the OS unless the visitor
+   picks a theme with the toggle (stored as data-theme on <html>).
+   ------------------------------------------------------------------ */
+:root {
+  --bg: #f6f4ef;
+  --surface: #efebe3;
+  --ink: #1b1a17;
+  --muted: #5c5850;
+  --rule: #dcd6cb;
+  --rule-strong: #bdb6a9;
+  --accent: #b83c0a;
+  --accent-soft: #b83c0a1f;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #121210;
+    --surface: #1b1a17;
+    --ink: #ece9e2;
+    --muted: #a19c92;
+    --rule: #2b2a26;
+    --rule-strong: #45433d;
+    --accent: #ff8a4c;
+    --accent-soft: #ff8a4c24;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #121210;
+  --surface: #1b1a17;
+  --ink: #ece9e2;
+  --muted: #a19c92;
+  --rule: #2b2a26;
+  --rule-strong: #45433d;
+  --accent: #ff8a4c;
+  --accent-soft: #ff8a4c24;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-rule: var(--rule);
+  --color-rule-strong: var(--rule-strong);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+
+  --font-serif: var(--font-instrument-serif), ui-serif, Georgia, serif;
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* Type scale (1.25 minor third, fluid at the top end). */
+  --text-meta: 0.75rem;
+  --text-meta--line-height: 1.5;
+  --text-meta--letter-spacing: 0.06em;
+  --text-lede: clamp(1.1875rem, 1.05rem + 0.55vw, 1.5rem);
+  --text-lede--line-height: 1.4;
+  --text-h3: clamp(2.25rem, 1.6rem + 2.6vw, 3.5rem);
+  --text-h3--line-height: 1;
+  --text-h2: clamp(2.5rem, 1.7rem + 3.2vw, 4.25rem);
+  --text-h2--line-height: 1;
+  --text-display: clamp(5.25rem, 1rem + 17vw, 9.5rem);
+  --text-display--line-height: 0.9;
+
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+@layer base {
+  html {
+    background: var(--bg);
+    color: var(--ink);
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    scroll-padding-top: 5rem;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+  body {
+    background: var(--bg);
+    font-family: var(--font-sans);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    font-feature-settings: "ss01", "cv11";
+  }
+  ::selection {
+    background: var(--accent);
+    color: var(--bg);
+  }
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+}
+
+@layer components {
+  /* Mono metadata label: dates, section numbers, stack lists. */
+  .meta {
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+    letter-spacing: var(--text-meta--letter-spacing);
+    line-height: var(--text-meta--line-height);
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* Text link: hairline underline that thickens and turns accent on hover. */
+  .link {
+    text-decoration-line: underline;
+    text-decoration-color: var(--rule-strong);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.22em;
+    transition:
+      text-decoration-color 160ms ease,
+      text-decoration-thickness 160ms ease,
+      color 160ms ease;
+  }
+  .link:hover {
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 2px;
+  }
+
+  /* Placeholder chip. Deliberately loud so it can't ship unnoticed. */
+  .todo {
+    display: inline;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    line-height: 1.7;
+    color: var(--accent);
+    background: var(--accent-soft);
+    outline: 1px dashed var(--accent);
+    outline-offset: -1px;
+    padding: 0.1em 0.4em;
+    border-radius: 2px;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+  }
+}
+
+/* Theme toggle icon: the filled half flips in dark mode (CSS-driven, so no hydration flash). */
+:root[data-theme="dark"] .theme-half {
+  transform: rotate(180deg);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .theme-half {
+    transform: rotate(180deg);
+  }
+}
+
+/* ------------------------------------------------------------------
+   Fig. 0: the face mesh draws in once with a single scan line.
+   Everything here is off for prefers-reduced-motion.
+   ------------------------------------------------------------------ */
+.mesh-lines {
+  transition: opacity 400ms ease;
+}
+.mesh:hover .mesh-lines {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .mesh-reveal {
+    animation: mesh-reveal 1100ms var(--ease-out-quart) 150ms both;
+  }
+  .mesh-scan {
+    animation: mesh-scan 1100ms var(--ease-out-quart) 150ms both;
+  }
+  .mesh-callouts {
+    animation: fade-in 400ms ease 1150ms both;
+  }
+}
+
+@keyframes mesh-reveal {
+  from {
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+@keyframes mesh-scan {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(480px);
+    opacity: 0;
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mesh-scan {
+    display: none;
+  }
+}
