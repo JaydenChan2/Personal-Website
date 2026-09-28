@@ -267,7 +267,7 @@ function totalsBetween(days: DayTotals[], from: string, to: string) {
 
 /**
  * One human line about the week, e.g.
- * "This week: mostly studying, 2 badminton sessions."
+ * "This week: mostly studying, 2 gym sessions." (session counts only for categories with a sessionNoun)
  */
 export function weekSentence(minutes: Record<string, number>, sessions: Record<string, number>, categories: CategoryInfo[]) {
   const total = Object.values(minutes).reduce((a, b) => a + b, 0);

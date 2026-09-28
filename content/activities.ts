@@ -16,7 +16,7 @@ export type ActivityCategory = {
   color: { light: string; dark: string };
   /** Used in the summary line: "This week: mostly <phrase>". */
   phrase: string;
-  /** If set, the summary line counts sessions: "2 badminton sessions". [singular, plural] */
+  /** If set, the summary line counts sessions, e.g. ["gym session", "gym sessions"] → "2 gym sessions". */
   sessionNoun?: [string, string];
 };
 
@@ -34,11 +34,10 @@ export const activities: ActivityCategory[] = [
     phrase: "building things",
   },
   {
-    id: "badminton",
-    label: "Badminton",
+    id: "hobbies",
+    label: "Hobbies",
     color: { light: "#c2410c", dark: "#df6a28" },
-    phrase: "badminton",
-    sessionNoun: ["badminton session", "badminton sessions"],
+    phrase: "hobbies",
   },
   {
     id: "social",

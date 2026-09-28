@@ -13,7 +13,7 @@ const rows = [];
 let nextId = 1;
 
 if (process.argv.includes("--seed")) {
-  const kinds = ["studying", "building", "badminton", "social"];
+  const kinds = ["studying", "building", "hobbies", "social"];
   const now = Date.now();
   for (let d = 90; d >= 1; d--) {
     if (Math.random() < 0.25) continue; // some empty days

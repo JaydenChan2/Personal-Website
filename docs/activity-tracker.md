@@ -111,9 +111,9 @@ Push to GitHub. Vercel builds it, provided the environment variables from step 2
 
 1. Open **Shortcuts** → tap **+** → rename it **Log activity** (tap the name at the top).
 2. Add **Choose from Menu**. Set the prompt to *What are you doing?* and make five items:
-   `Studying`, `Building`, `Badminton`, `Social`, `Stop`.
+   `Studying`, `Building`, `Hobbies`, `Social`, `Stop`.
 3. Under **each** menu item, add a **Text** action containing the lowercase id:
-   `studying`, `building`, `badminton`, `social`, `stop`.
+   `studying`, `building`, `hobbies`, `social`, `stop`.
    (The menu passes on whatever the chosen branch's last action outputs, so this becomes the Menu Result.)
 4. After **End Menu**, add **Get Contents of URL**:
    - URL: `https://www.jaydenchan.xyz/api/log`
@@ -155,7 +155,7 @@ every 30 minutes at best). If it can't connect, it shows the last data it loaded
 ## Adding a category
 
 Add one entry to `activities` in `content/activities.ts` (id, label, light/dark colour, phrase, and
-optionally `sessionNoun` if you want it counted, like badminton). Then add a matching menu item and
+optionally `sessionNoun` if you want sessions counted in the summary line, e.g. "2 gym sessions"). Then add a matching menu item and
 Text action in the Shortcut. If you enabled the optional `CHECK` constraint in the SQL, update it too.
 
 ## Security and privacy notes

@@ -9,7 +9,7 @@ export const revalidate = 900;
 
 export const metadata: Metadata = {
   title: "Activity",
-  description: "What Jayden Chan has been spending time on lately: studying, building, badminton and more.",
+  description: "What Jayden Chan has been spending time on lately: studying, building, hobbies and more.",
 };
 
 export default async function ActivityPage() {
