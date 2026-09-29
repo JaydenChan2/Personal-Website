@@ -41,9 +41,14 @@ export function ActivityContent({ summary }: { summary: Summary | null }) {
   }
   return (
     <div className="grid gap-x-12 gap-y-12 border-t border-line pt-8 md:grid-cols-12">
-      <section aria-labelledby="this-week" className="md:col-span-4">
-        <WeekBreakdown summary={summary} />
-      </section>
+      <div className="space-y-12 md:col-span-4">
+        <section aria-labelledby="this-week">
+          <WeekBreakdown summary={summary} />
+        </section>
+        <section aria-labelledby="time-spent">
+          <TimeTotals summary={summary} />
+        </section>
+      </div>
       <section aria-label="Time per day by category" className="md:col-span-8">
         <CategoryCharts summary={summary} />
       </section>
@@ -86,6 +91,73 @@ function WeekBreakdown({ summary }: { summary: Summary }) {
           </ul>
         </>
       )}
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------
+   Time spent: totals per category for today, this week and this month.
+   ------------------------------------------------------------------ */
+
+const monthName = new Intl.DateTimeFormat("en-CA", { month: "long", timeZone: "UTC" });
+
+function TimeTotals({ summary }: { summary: Summary }) {
+  const { today, week, month, monthStart } = summary.totals;
+  const periods = [
+    { key: "today", label: "Today", minutes: today },
+    { key: "week", label: "Week", minutes: week },
+    { key: "month", label: monthName.format(parseDay(monthStart)), minutes: month },
+  ];
+  const sum = (m: Record<string, number>) => Object.values(m).reduce((a, b) => a + b, 0);
+  const show = (m: number) => (m > 0 ? formatMinutes(m) : "–");
+
+  return (
+    <div>
+      <h2 id="time-spent" className="label">
+        Time spent
+      </h2>
+      <table className="mt-3 w-full text-[0.9375rem]">
+        <thead>
+          <tr className="text-left text-sm text-muted">
+            <th scope="col" className="pb-2 font-normal">
+              <span className="sr-only">Category</span>
+            </th>
+            {periods.map((p) => (
+              <th key={p.key} scope="col" className="pb-2 text-right font-normal">
+                {p.label}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody className="tabular-nums">
+          {activities.map((c) => (
+            <tr key={c.id} className="border-t border-line">
+              <th scope="row" className="py-2 text-left font-normal">
+                <span className="flex items-center gap-2.5">
+                  <span className="inline-block size-2 shrink-0 rounded-full" style={{ background: colorOf(c) }} aria-hidden="true" />
+                  {c.label}
+                </span>
+              </th>
+              {periods.map((p) => (
+                <td key={p.key} className={`py-2 pl-3 text-right ${p.minutes[c.id] ? "" : "text-muted"}`}>
+                  {show(p.minutes[c.id] ?? 0)}
+                </td>
+              ))}
+            </tr>
+          ))}
+          <tr className="border-t border-line-strong font-medium">
+            <th scope="row" className="py-2 text-left font-medium">
+              Total
+            </th>
+            {periods.map((p) => (
+              <td key={p.key} className="py-2 pl-3 text-right">
+                {show(sum(p.minutes))}
+              </td>
+            ))}
+          </tr>
+        </tbody>
+      </table>
+      <p className="label mt-3">Today&rsquo;s count updates once an activity ends.</p>
     </div>
   );
 }

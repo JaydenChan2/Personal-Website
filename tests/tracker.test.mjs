@@ -125,3 +125,21 @@ test("weekly comparison: averages per day, enabled only with enough data last we
   const sparse = summarize(entries.slice(2), NOW, opts); // only 2 active days last week
   assert.equal(sparse.compare.enabled, false);
 });
+
+test("totals for today, this week and this month", () => {
+  // NOW = Wed Sep 23. Month starts Sep 1, week starts Mon Sep 21.
+  const s = summarize(
+    [
+      log("building", "2026-08-31T14:00:00Z"), log("stop", "2026-08-31T15:00:00Z"), // last month: excluded everywhere
+      log("building", "2026-09-02T14:00:00Z"), log("stop", "2026-09-02T16:00:00Z"), // this month only
+      log("building", "2026-09-21T14:00:00Z"), log("stop", "2026-09-21T14:30:00Z"), // Monday: week + month
+      log("studying", "2026-09-23T13:00:00Z"), log("stop", "2026-09-23T14:15:00Z"), // today
+    ],
+    NOW,
+    opts,
+  );
+  assert.deepEqual(s.totals.today, { studying: 75 });
+  assert.deepEqual(s.totals.week, { building: 30, studying: 75 });
+  assert.deepEqual(s.totals.month, { building: 150, studying: 75 });
+  assert.equal(s.totals.monthStart, "2026-09-01");
+});

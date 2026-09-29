@@ -16,4 +16,4 @@ alter table public.activity_log enable row level security;
 -- Optional: have the database reject unknown categories too. If you add this, remember
 -- to update it whenever you add a category in content/activities.ts.
 -- alter table public.activity_log add constraint activity_log_known_activity
---   check (activity in ('studying', 'building', 'badminton', 'social', 'stop'));
+--   check (activity in ('studying', 'building', 'hobbies', 'social', 'stop'));

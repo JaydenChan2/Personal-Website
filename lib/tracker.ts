@@ -60,6 +60,14 @@ export type Summary = {
     thisWeek: Record<string, number>;
     lastWeek: Record<string, number>;
   };
+  /** Total minutes per category for today, this week (from Monday) and this calendar month. */
+  totals: {
+    today: Record<string, number>;
+    week: Record<string, number>;
+    month: Record<string, number>;
+    /** First day of the current month, YYYY-MM-DD. */
+    monthStart: string;
+  };
   sentence: string;
   hasData: boolean;
 };
@@ -139,6 +147,7 @@ function dateRange(nowMs: number, timeZone: string, weeks: number) {
     weekStart: isoDate(t.y, t.m, t.d - weekday),
     lastWeekStart: isoDate(t.y, t.m, t.d - weekday - 7),
     daysElapsed: weekday + 1,
+    monthStart: isoDate(t.y, t.m, 1),
     rangeStart: localMidnight(t.y, t.m, t.d - startOffset, timeZone),
   };
 }
@@ -198,7 +207,7 @@ function splitByDay(seg: Segment, timeZone: string) {
 }
 
 export function summarize(entries: LogEntry[], nowMs: number, opts: SummaryOptions): Summary {
-  const { dates, weekStart, lastWeekStart, daysElapsed } = dateRange(nowMs, opts.timeZone, opts.weeks);
+  const { dates, weekStart, lastWeekStart, daysElapsed, monthStart } = dateRange(nowMs, opts.timeZone, opts.weeks);
   const inRange = new Set(dates);
   const perDay = new Map<string, Map<string, number>>(dates.map((d) => [d, new Map()]));
   const weekSessions: Record<string, number> = {};
@@ -239,6 +248,13 @@ export function summarize(entries: LogEntry[], nowMs: number, opts: SummaryOptio
     days,
     week: { start: weekStart, total: thisWeek.total, minutes: thisWeek.minutes, sessions: weekSessions, daysElapsed },
     lastWeek: { start: lastWeekStart, ...lastWeek },
+    totals: {
+      today: totalsBetween(days, dates[dates.length - 1], "9999-12-31").minutes,
+      week: thisWeek.minutes,
+      // The date range always reaches back 12+ weeks, so it covers the whole month.
+      month: totalsBetween(days, monthStart, "9999-12-31").minutes,
+      monthStart,
+    },
     compare: {
       enabled: lastWeek.activeDays >= opts.compareMinDays,
       thisWeek: averagePerDay(thisWeek.minutes, daysElapsed),
@@ -267,7 +283,7 @@ function totalsBetween(days: DayTotals[], from: string, to: string) {
 
 /**
  * One human line about the week, e.g.
- * "This week: mostly studying, 2 badminton sessions."
+ * "This week: mostly studying, 2 gym sessions." (session counts only for categories with a sessionNoun)
  */
 export function weekSentence(minutes: Record<string, number>, sessions: Record<string, number>, categories: CategoryInfo[]) {
   const total = Object.values(minutes).reduce((a, b) => a + b, 0);
