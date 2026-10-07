@@ -29,7 +29,7 @@ export const site = {
   education: {
     school: "University of Waterloo & Wilfrid Laurier University",
     degree: "Bachelor of Computer Science + Bachelor of Business Administration, Double Degree with Co-op",
-    end: "June 2030",
+    end: "May 2030",
     coursework: [
       "Algorithm Design & Data Abstraction",
       "Object-Oriented Design",
