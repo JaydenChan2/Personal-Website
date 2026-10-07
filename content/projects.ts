@@ -1,4 +1,4 @@
-import { todo, type MinorProject, type Project } from "./types";
+import type { MinorProject, Project } from "./types";
 
 /**
  * Projects, in display order. The first one gets the wide card on /work and is the
@@ -36,9 +36,7 @@ export const projects: Project[] = [
       "A Next.js App Router site with Stripe-backed flows for program fees, financial-assistance applications and donations. I worked directly with the Executive Director through regular check-ins, turning program needs into scoped features against a fixed brief.",
     decision: {
       title: "Hand-rolled i18n and theming, no libraries",
-      body: todo(
-        "The site already switches EN/FR in place on the same URL. Add a sentence or two on how it works (how translations are stored and typed) and why you skipped an i18n library.",
-      ),
+      body: "Every page needed to work in both English and French, plus light and dark themes. Rather than add an i18n or theming library, I built both from scratch: the language switches in place on the same URL, the site carries no extra dependencies for either, and I control exactly how each one behaves.",
     },
     outcomes: [
       "Live at geniboo.ca, serving nine program categories.",
@@ -107,7 +105,7 @@ export const projects: Project[] = [
     summary: "Real-time facial geometry analysis from a webcam feed.",
     featured: false,
     kind: "Personal project · Computer vision",
-    year: todo("Year built"),
+    year: "2025",
     stack: ["Python", "Flask", "MediaPipe", "OpenCV", "NumPy"],
     source: "https://github.com/JaydenChan2/chud-ai",
     video: { id: "Jv91GEhY3nk", title: "Facet demo" },

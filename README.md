@@ -11,6 +11,7 @@ cursor field, project preview, click-to-load video).
 
 ## Contents
 
+- [Tech stack](#tech-stack)
 - [Pages](#pages)
 - [Getting started](#getting-started)
 - [Environment variables](#environment-variables)
@@ -23,6 +24,24 @@ cursor field, project preview, click-to-load video).
 - [Before you ship](#before-you-ship)
 
 ---
+
+## Tech stack
+
+| Layer | Tools |
+| --- | --- |
+| Framework | [Next.js 16](https://nextjs.org) (App Router, static generation + 15-minute revalidation), React 19 |
+| Language | TypeScript 5 |
+| Styling | Tailwind CSS v4 (via `@tailwindcss/postcss`), CSS custom properties for light/dark theming |
+| Fonts & images | `next/font` (Schibsted Grotesk, self-hosted), `next/image` (AVIF/WebP) |
+| Share image | `next/og` (Open Graph image rendered at build time) |
+| Charts | Hand-written SVG, server-rendered, no charting library |
+| Database | [Supabase](https://supabase.com) (Postgres), called through its REST API with plain `fetch`, no SDK |
+| API | Next.js route handlers (`/api/log`, `/api/summary`) |
+| Testing | Node's built-in test runner (`node --test`) |
+| Hosting | [Vercel](https://vercel.com) |
+| iPhone | iOS Shortcuts (logging) and [Scriptable](https://scriptable.app) (home screen widget) |
+
+Runtime dependencies are just `next`, `react` and `react-dom`; everything else is a dev dependency.
 
 ## Pages
 
