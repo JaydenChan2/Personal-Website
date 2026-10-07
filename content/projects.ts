@@ -36,7 +36,6 @@ export const projects: Project[] = [
       "A Next.js App Router site with Stripe-backed flows for program fees, financial-assistance applications and donations. I worked directly with the Executive Director through regular check-ins, turning program needs into scoped features against a fixed brief.",
     decision: {
       title: "Hand-rolled i18n and theming, no libraries",
-      // Placeholder wording: swap in specifics about how the translations work when you have them.
       body: "Every page needed to work in both English and French, plus light and dark themes. Rather than add an i18n or theming library, I built both from scratch: the language switches in place on the same URL, the site carries no extra dependencies for either, and I control exactly how each one behaves.",
     },
     outcomes: [
