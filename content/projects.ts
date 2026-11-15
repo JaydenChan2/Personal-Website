@@ -7,6 +7,35 @@ import type { MinorProject, Project } from "./types";
  */
 export const projects: Project[] = [
   {
+    slug: "guitar-tab-ai",
+    title: "Guitar Tab AI",
+    summary: "Turns a recording, a song link or a video into guitar tab you can read, hear and download.",
+    kind: "Personal project · AI / Audio",
+    year: "2026",
+    stack: ["React", "Vite", "Flask", "basic-pitch", "Demucs", "librosa", "OpenCV"],
+    live: "https://music-to-sheet-converter.vercel.app/",
+    source: "https://github.com/JaydenChan2/Music-to-Sheet-Converter",
+    cover: {
+      src: "/work/guitar-tab-ai.jpg",
+      alt: "Guitar Tab AI landing page: 'Audio to Tab' in large type under a six-string tab with an orange playhead.",
+      width: 1920,
+      height: 1084,
+    },
+    problem:
+      "Most songs never get an accurate tab, and working one out by ear is slow. Lessons and play-alongs often show the tab on screen or name the capo and tuning out loud, but that information is stuck inside the video.",
+    built:
+      "A Flask pipeline that downloads links with yt-dlp, isolates the guitar with Demucs, retunes off-pitch audio, detects polyphonic notes with basic-pitch and snaps them to a librosa beat grid. Tutorial mode reads captions or runs Whisper locally to pick up the capo, tuning and chords a teacher mentions. Tabs-on-screen mode uses OpenCV and a digit reader I trained to read the tab shown in the video. The React front end plays the result back with a Karplus-Strong synth and exports TXT or MIDI.",
+    decision: {
+      title: "Pick strings and frets with a Viterbi search",
+      body: "The same pitch can be played in several places on the neck, so a note-by-note lookup gives tabs no one can play. A Viterbi search over every possible position picks the path that keeps the hand still and avoids big stretches. A second model, fitted on GuitarSet, then rechecks each note against the audio and hides near-certain ghost notes.",
+    },
+    outcomes: [
+      "72.9% note-onset F1 on 60 held-out GuitarSet clips with the tab check (71.3% without).",
+      "94.5% exact string and fret when a tab is shown on screen, vs 68.2% from audio alone on the same clips.",
+      "Runs entirely on open-source models, with no paid APIs.",
+    ],
+  },
+  {
     slug: "geniboo",
     title: "GENIBOO",
     summary: "Bilingual registration and payments for a children's nonprofit.",
@@ -96,29 +125,6 @@ export const projects: Project[] = [
       "Front end, API and database deployed separately on Vercel, Render and Neon.",
       "Prisma migrations run automatically on every deploy.",
       "Cross-origin auth configured between the separately hosted services.",
-    ],
-  },
-  {
-    slug: "guitar-tab-ai",
-    title: "Guitar Tab AI",
-    summary: "Turns a recording, a song link or a video into guitar tab you can read, hear and download.",
-    kind: "Personal project · AI / Audio",
-    year: "2026",
-    stack: ["React", "Vite", "Flask", "basic-pitch", "Demucs", "librosa", "OpenCV"],
-    live: "https://music-to-sheet-converter.vercel.app/",
-    source: "https://github.com/JaydenChan2/Music-to-Sheet-Converter",
-    problem:
-      "Most songs never get an accurate tab, and working one out by ear is slow. Lessons and play-alongs often show the tab on screen or name the capo and tuning out loud, but that information is stuck inside the video.",
-    built:
-      "A Flask pipeline that downloads links with yt-dlp, isolates the guitar with Demucs, retunes off-pitch audio, detects polyphonic notes with basic-pitch and snaps them to a librosa beat grid. Tutorial mode reads captions or runs Whisper locally to pick up the capo, tuning and chords a teacher mentions. Tabs-on-screen mode uses OpenCV and a digit reader I trained to read the tab shown in the video. The React front end plays the result back with a Karplus-Strong synth and exports TXT or MIDI.",
-    decision: {
-      title: "Pick strings and frets with a Viterbi search",
-      body: "The same pitch can be played in several places on the neck, so a note-by-note lookup gives tabs no one can play. A Viterbi search over every possible position picks the path that keeps the hand still and avoids big stretches. A second model, fitted on GuitarSet, then rechecks each note against the audio and hides near-certain ghost notes.",
-    },
-    outcomes: [
-      "72.9% note-onset F1 on 60 held-out GuitarSet clips with the tab check (71.3% without).",
-      "94.5% exact string and fret when a tab is shown on screen, vs 68.2% from audio alone on the same clips.",
-      "Runs entirely on open-source models, with no paid APIs.",
     ],
   },
   {
