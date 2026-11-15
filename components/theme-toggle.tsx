@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
 type Theme = "light" | "dark";
 
 function currentTheme(): Theme {
@@ -10,33 +8,30 @@ function currentTheme(): Theme {
   return matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 }
 
+/**
+ * The ground switch: a split disc that turns over with the theme. The label and
+ * the disc are both driven by CSS from data-theme, so nothing flashes on load.
+ */
 export function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme | null>(null);
-  useEffect(() => setTheme(currentTheme()), []);
-
-  const next: Theme = theme === "dark" ? "light" : "dark";
   return (
     <button
       type="button"
+      className="ground"
       onClick={() => {
+        const next: Theme = currentTheme() === "dark" ? "light" : "dark";
         document.documentElement.dataset.theme = next;
         try {
           localStorage.setItem("theme", next);
         } catch {}
-        setTheme(next);
       }}
-      className="grid size-9 place-items-center rounded-full text-muted transition-colors hover:bg-sunken hover:text-ink"
-      aria-label={theme ? `Switch to ${next} theme` : "Toggle theme"}
     >
-      {/* Half-filled disc: the filled half swaps sides with the theme. */}
-      <svg viewBox="0 0 20 20" className="size-[18px]" aria-hidden="true">
-        <circle cx="10" cy="10" r="7.25" fill="none" stroke="currentColor" strokeWidth="1.5" />
-        <path
-          d="M10 2.75a7.25 7.25 0 0 1 0 14.5z"
-          fill="currentColor"
-          className="theme-half origin-center transition-transform duration-300 ease-out motion-reduce:transition-none"
-        />
-      </svg>
+      <span className="disc" aria-hidden="true" />
+      <span className="to-dark">
+        Dark<span className="sr-only"> theme</span>
+      </span>
+      <span className="to-light">
+        Light<span className="sr-only"> theme</span>
+      </span>
     </button>
   );
 }

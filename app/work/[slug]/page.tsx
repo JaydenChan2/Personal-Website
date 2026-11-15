@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { container, PageFooter } from "@/components/container";
-import { Cover } from "@/components/cover";
+import { CoverPlate, StackPlate, StatPlate } from "@/components/plate";
 import { ArrowOut, MaybeLink, T } from "@/components/text";
 import { VideoPoster } from "@/components/video-poster";
 import { getProject, projects } from "@/content/projects";
@@ -26,140 +25,141 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
 
   const index = projects.indexOf(p);
   const next = projects[(index + 1) % projects.length];
+  const no = `P-${String(index + 1).padStart(2, "0")}`;
 
   return (
-    <>
-      <article className={`${container} pt-8 md:pt-12`}>
-        <div>
-          <Link href="/work" className="label link inline-block hover:text-ink">
-            ← All work
-          </Link>
+    <article className="wrap page-top pb-[clamp(72px,11vh,130px)]">
+      <Link href="/work" className="ghost fx">
+        ← All work
+      </Link>
 
-          <header className="intro-item mt-10 grid gap-x-8 gap-y-8 md:grid-cols-12">
-            <div className="md:col-span-8">
-              <p className="label">{p.kind}</p>
-              <h1 className="mt-2 text-title">{p.title}</h1>
-              <p className="mt-5 max-w-[34ch] text-lede text-muted">{p.summary}</p>
+      <header className="sec-head mt-12">
+        <span className="mono fx">
+          {no} — {p.kind.split(" · ")[0]}
+        </span>
+        <div className="sec-title fx">
+          <h1>{p.title}</h1>
+          <p className="mt-5 max-w-[34ch] text-[clamp(1.1rem,1.6vw,1.4rem)] font-light leading-snug text-ink-2">{p.summary}</p>
+        </div>
+        <dl className="side fx grid gap-4">
+          <div>
+            <dt className="mono">Year</dt>
+            <dd className="text-ink">
+              <T value={p.year} />
+            </dd>
+          </div>
+          {p.role && (
+            <div>
+              <dt className="mono">Role</dt>
+              <dd className="text-ink">{p.role}</dd>
             </div>
-            <dl className="grid grid-cols-2 gap-x-6 gap-y-4 self-end text-[0.9375rem] md:col-span-4 md:grid-cols-1">
-              <div>
-                <dt className="label">Year</dt>
+          )}
+          <div>
+            <dt className="mono">Stack</dt>
+            <dd className="text-ink">{p.stack.join(", ")}</dd>
+          </div>
+          {(p.live || p.source) && (
+            <div className="flex flex-wrap gap-x-5">
+              <dt className="sr-only">Links</dt>
+              {p.live && (
                 <dd>
-                  <T value={p.year} />
+                  <MaybeLink href={p.live} className="ghost">
+                    Visit site
+                  </MaybeLink>
                 </dd>
-              </div>
-              {p.role && (
-                <div>
-                  <dt className="label">Role</dt>
-                  <dd>{p.role}</dd>
-                </div>
               )}
-              <div className="col-span-2 md:col-span-1">
-                <dt className="label">Stack</dt>
-                <dd>{p.stack.join(", ")}</dd>
-              </div>
-              {(p.live || p.source) && (
-                <div className="col-span-2 flex flex-wrap gap-x-5 md:col-span-1">
-                  <dt className="sr-only">Links</dt>
-                  {p.live && (
-                    <dd>
-                      <MaybeLink href={p.live} className="link-u">
-                        Visit site
-                      </MaybeLink>
-                    </dd>
-                  )}
-                  {p.source && (
-                    <dd>
-                      <a href={p.source} target="_blank" rel="noreferrer" className="link-u">
-                        Source
-                        <ArrowOut />
-                      </a>
-                    </dd>
-                  )}
-                </div>
+              {p.source && (
+                <dd>
+                  <a href={p.source} target="_blank" rel="noreferrer" className="ghost">
+                    Source
+                    <ArrowOut />
+                  </a>
+                </dd>
               )}
-            </dl>
-          </header>
-
-          {p.cover && (
-            <div className="intro-item mt-14 overflow-hidden rounded-md ring-1 ring-line" style={{ "--d": "80ms" } as React.CSSProperties}>
-              <Cover project={p} sizes="(min-width: 1152px) 1088px, 100vw" priority className="aspect-[16/10]" />
             </div>
           )}
-        </div>
+        </dl>
+      </header>
 
-        <div className="mt-20 grid gap-x-8 gap-y-16 md:grid-cols-12">
-          <Section title="The problem">
+      {p.cover ? (
+        <div className="reveal">
+          <CoverPlate project={p} sizes="(min-width: 1360px) 1250px, 100vw" priority className="aspect-[16/10] w-full" />
+        </div>
+      ) : (
+        <div className="reveal grid12">
+          <CoverPlate project={p} sizes="1px" className="col-span-12 h-[260px] md:col-span-6 md:h-[320px]" />
+          {p.stat && <StatPlate stat={p.stat} className="col-span-6 h-[240px] md:col-span-3 md:h-[320px]" />}
+          <StackPlate stack={p.stack} className="col-span-6 h-[240px] md:col-span-3 md:h-[320px]" />
+        </div>
+      )}
+
+      <div className="mt-[clamp(56px,9vh,110px)]">
+        <Section label="01 — The problem">
+          <p className="prose">
             <T value={p.problem} />
-          </Section>
-          <Section title="What I built">
+          </p>
+        </Section>
+        <Section label="02 — What I built">
+          <p className="prose">
             <T value={p.built} />
+          </p>
+        </Section>
+        <Section label="03 — A decision" wide>
+          <div className="callout">
+            <p className="text-[clamp(1.35rem,2vw,1.8rem)] font-light leading-snug tracking-[-0.005em]">{p.decision.title}</p>
+            <p className="mt-4 max-w-[62ch] text-ink-2">
+              <T value={p.decision.body} />
+            </p>
+          </div>
+        </Section>
+
+        {p.outcomes && p.outcomes.length > 0 && (
+          <Section label="04 — Outcomes">
+            <ol className="num-list">
+              {p.outcomes.map((o) => (
+                <li key={o}>{o}</li>
+              ))}
+            </ol>
           </Section>
+        )}
 
-          <section className="md:col-span-10 md:col-start-3">
-            <div className="rounded-md bg-sunken p-6 sm:p-8">
-              <h2 className="label">A decision worth explaining</h2>
-              <p className="mt-2 text-2xl font-medium leading-tight tracking-tight">{p.decision.title}</p>
-              <p className="mt-3 max-w-[62ch] text-muted">
-                <T value={p.decision.body} />
-              </p>
+        {p.video && (
+          <Section label="Demo" wide>
+            <div className="ph">
+              <VideoPoster id={p.video.id} title={p.video.title} designed={!p.cover} />
             </div>
-          </section>
+          </Section>
+        )}
 
-          {p.outcomes && p.outcomes.length > 0 && (
-            <Section title="Outcomes">
-              <ul className="space-y-3">
-                {p.outcomes.map((o) => (
-                  <li key={o} className="flex gap-3">
-                    <span aria-hidden="true" className="mt-[0.7em] size-1.5 shrink-0 rounded-full bg-accent" />
-                    <span>{o}</span>
-                  </li>
-                ))}
-              </ul>
-            </Section>
-          )}
-
-          {p.video && (
-            <section className="md:col-span-10 md:col-start-3">
-              <h2 className="label mb-3">Demo</h2>
-              <div className="overflow-hidden rounded-md ring-1 ring-line">
-                <VideoPoster id={p.video.id} title={p.video.title} designed={!p.cover} />
+        {p.gallery?.map((g) => (
+          <Section label="Plate" wide key={g.src}>
+            <figure>
+              <div className="reveal">
+                <div className="ph ph--auto">
+                  <Image src={g.src} alt={g.alt} width={g.width} height={g.height} sizes="(min-width: 1360px) 940px, 100vw" />
+                </div>
               </div>
-            </section>
-          )}
-
-          {p.gallery?.map((g) => (
-            <figure key={g.src} className="md:col-span-10 md:col-start-3">
-              <div className="overflow-hidden rounded-md ring-1 ring-line">
-                <Image src={g.src} alt={g.alt} width={g.width} height={g.height} sizes="(min-width: 1152px) 900px, 100vw" className="h-auto w-full" />
-              </div>
-              <figcaption className="label mt-3">{g.caption}</figcaption>
+              <figcaption className="note mt-3">{g.caption}</figcaption>
             </figure>
-          ))}
-        </div>
+          </Section>
+        ))}
+      </div>
 
-        <nav aria-label="Next project" className="mt-24">
-          <Link href={`/work/${next.slug}`} className="group block border-t border-line pt-6">
-            <span className="label">Next project</span>
-            <span className="mt-1 flex items-baseline justify-between gap-6">
-              <span className="text-title transition-colors group-hover:text-accent">{next.title}</span>
-              <span aria-hidden="true" className="text-3xl text-muted transition-transform duration-300 ease-out group-hover:translate-x-2 group-hover:text-accent motion-reduce:transform-none">
-                →
-              </span>
-            </span>
-          </Link>
-        </nav>
-      </article>
-      <PageFooter />
-    </>
+      <nav aria-label="Next project" className="border-t border-line pt-[clamp(40px,7vh,80px)]">
+        <span className="mono mb-6 block">Next project</span>
+        <Link href={`/work/${next.slug}`} className="mail">
+          {next.title} <span className="arr" aria-hidden="true">→</span>
+        </Link>
+      </nav>
+    </article>
   );
 }
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Section({ label, wide = false, children }: { label: string; wide?: boolean; children: React.ReactNode }) {
   return (
-    <section className="grid gap-x-8 gap-y-3 md:col-span-10 md:col-start-3 md:grid-cols-10">
-      <h2 className="label md:col-span-3 md:pt-1">{title}</h2>
-      <div className="max-w-[62ch] text-lg leading-relaxed md:col-span-7">{children}</div>
+    <section className="row fx">
+      <h2 className="row-label mono">{label}</h2>
+      <div className={wide ? "row-wide" : "row-body"}>{children}</div>
     </section>
   );
 }

@@ -1,12 +1,13 @@
 import Link from "next/link";
-import { container } from "@/components/container";
 
 export default function NotFound() {
   return (
-    <div className={`${container} flex flex-1 flex-col justify-center py-16`}>
-      <p className="intro-item label">404</p>
-      <h1 className="mt-3 text-title">Nothing detected here.</h1>
-      <p className="mt-5 text-lede text-muted">
+    <div className="wrap page-top flex flex-1 flex-col justify-center">
+      <p className="mono">404</p>
+      <h1 className="h-display mt-6">
+        Nothing hung <b>on this wall.</b>
+      </h1>
+      <p className="mt-6 text-ink-2">
         That page doesn&rsquo;t exist.{" "}
         <Link href="/" className="link-u text-ink">
           Back to the start

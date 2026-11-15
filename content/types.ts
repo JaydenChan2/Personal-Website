@@ -42,6 +42,8 @@ export type Project = {
   decision: { title: string; body: Text };
   /** Plain-language outcomes. Real numbers only. */
   outcomes?: string[];
+  /** One headline number, set large on the project's montage. Must come from the outcomes or write-up. */
+  stat?: { value: string; label: string };
 };
 
 /** Smaller projects, listed one line each at the bottom of /work. */

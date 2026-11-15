@@ -14,31 +14,26 @@ export default async function OpenGraphImage() {
     readFile(join(dir, "SchibstedGrotesk-Regular.ttf")),
   ]);
 
-  const corner = (pos: Record<string, number>, borders: Record<string, string>) => (
-    <div style={{ position: "absolute", width: 28, height: 28, ...pos, ...borders }} />
-  );
-  const b = "3px solid #2340ff";
+  const label = { fontSize: 20, letterSpacing: 3, textTransform: "uppercase" as const, color: "#6d6d68" };
 
   return new ImageResponse(
     (
-      <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between", background: "#fbfbfa", padding: 80, fontFamily: "Sans" }}>
-        <div style={{ display: "flex", alignItems: "center", fontSize: 26, color: "#62626a" }}>
-          <div style={{ width: 14, height: 14, borderRadius: 7, background: "#17803f", marginRight: 14 }} />
-          Autonomy at WARG · SWE intern at World Health Network
+      <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between", background: "#fcfcfb", padding: 80, fontFamily: "Sans" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div style={{ fontSize: 24, fontWeight: 500, letterSpacing: 7, textTransform: "uppercase", color: "#141413" }}>
+            {`${site.name}.`}
+          </div>
+          <div style={label}>Software &amp; ML</div>
         </div>
         <div style={{ display: "flex", flexDirection: "column" }}>
-          <div style={{ position: "relative", display: "flex", alignSelf: "flex-start", padding: "8px 22px 22px 18px", marginLeft: -18 }}>
-            {corner({ top: 0, left: 0 }, { borderTop: b, borderLeft: b })}
-            {corner({ top: 0, right: 0 }, { borderTop: b, borderRight: b })}
-            {corner({ bottom: 0, left: 0 }, { borderBottom: b, borderLeft: b })}
-            {corner({ bottom: 0, right: 0 }, { borderBottom: b, borderRight: b })}
-            <div style={{ fontSize: 150, fontWeight: 500, letterSpacing: -7, lineHeight: 1, color: "#111112" }}>Jayden Chan</div>
-          </div>
-          <div style={{ fontSize: 38, lineHeight: 1.3, color: "#111112", marginTop: 30, maxWidth: 900, fontWeight: 400 }}>
-            {site.intro}
-          </div>
+          <div style={{ fontSize: 96, fontWeight: 400, letterSpacing: -2, lineHeight: 1.04, color: "#141413" }}>Software,</div>
+          <div style={{ fontSize: 96, fontWeight: 500, letterSpacing: -2, lineHeight: 1.04, color: "#141413" }}>and the world</div>
+          <div style={{ fontSize: 96, fontWeight: 400, letterSpacing: -2, lineHeight: 1.04, color: "#141413" }}>it runs in.</div>
         </div>
-        <div style={{ fontSize: 26, color: "#62626a" }}>jaydenchan.xyz</div>
+        <div style={{ display: "flex", justifyContent: "space-between", borderTop: "1px solid #d2d2cc", paddingTop: 24 }}>
+          <div style={label}>Waterloo &amp; Laurier</div>
+          <div style={label}>jaydenchan.xyz</div>
+        </div>
       </div>
     ),
     {
