@@ -1,15 +1,9 @@
 import type { Metadata, Viewport } from "next";
-import { Schibsted_Grotesk } from "next/font/google";
-import { CursorField } from "@/components/cursor-field";
+import { Motion } from "@/components/motion";
 import { Nav } from "@/components/nav";
+import { SiteFooter } from "@/components/site-footer";
 import { site } from "@/content/site";
 import "./globals.css";
-
-const sans = Schibsted_Grotesk({
-  subsets: ["latin"],
-  variable: "--font-schibsted",
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
@@ -29,14 +23,14 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#fbfbfa" },
-    { media: "(prefers-color-scheme: dark)", color: "#0d0d0f" },
+    { media: "(prefers-color-scheme: light)", color: "#fcfcfb" },
+    { media: "(prefers-color-scheme: dark)", color: "#111112" },
   ],
 };
 
-// Runs before first paint: applies a saved theme (no flash), and flags the first page
-// view of the session so the entrance animation plays once, then clears the flag.
-const headScript = `(function(){var d=document.documentElement;try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")d.dataset.theme=t}catch(e){}try{if(!sessionStorage.getItem("intro")&&!matchMedia("(prefers-reduced-motion: reduce)").matches){sessionStorage.setItem("intro","1");d.dataset.intro="";setTimeout(function(){delete d.dataset.intro},800)}}catch(e){}})()`;
+// Runs before first paint: applies a saved theme (no flash), and adds .js so reveal
+// animations only hide content when the script that un-hides it is known to run.
+const headScript = `(function(){var d=document.documentElement;d.classList.add("js");try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")d.dataset.theme=t}catch(e){}})()`;
 
 const personLd = {
   "@context": "https://schema.org",
@@ -53,7 +47,7 @@ const personLd = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={sans.variable} suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: headScript }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personLd) }} />
@@ -61,15 +55,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="flex min-h-svh flex-col">
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-3 focus:z-50 focus:rounded focus:bg-raised focus:px-3 focus:py-2"
+          className="sr-only z-50 bg-bg px-3 py-2 font-mono text-[11px] uppercase tracking-[0.14em] outline outline-1 focus:not-sr-only focus:fixed focus:left-4 focus:top-3"
         >
           Skip to content
         </a>
-        <CursorField />
         <Nav />
         <main id="main" className="flex flex-1 flex-col">
           {children}
         </main>
+        <SiteFooter />
+        <Motion />
       </body>
     </html>
   );

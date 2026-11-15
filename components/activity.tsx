@@ -75,7 +75,7 @@ function WeekBreakdown({ summary }: { summary: Summary }) {
 
       {rows.length > 0 && (
         <>
-          <div className="mt-5 flex h-2.5 gap-0.5 overflow-hidden rounded-full" aria-hidden="true">
+          <div className="mt-5 flex h-2 gap-0.5 overflow-hidden" aria-hidden="true">
             {rows.map(({ c, share }) => (
               <span key={c.id} style={{ width: `${share * 100}%`, background: colorOf(c) }} />
             ))}
@@ -118,7 +118,7 @@ function TimeTotals({ summary }: { summary: Summary }) {
       </h2>
       <table className="mt-3 w-full text-[0.9375rem]">
         <thead>
-          <tr className="text-left text-sm text-muted">
+          <tr className="text-left font-mono text-[10px] uppercase tracking-[0.16em] text-ink-3">
             <th scope="col" className="pb-2 font-normal">
               <span className="sr-only">Category</span>
             </th>
@@ -157,7 +157,7 @@ function TimeTotals({ summary }: { summary: Summary }) {
           </tr>
         </tbody>
       </table>
-      <p className="label mt-3">Today&rsquo;s count updates once an activity ends.</p>
+      <p className="note mt-3">Today&rsquo;s count updates once an activity ends.</p>
     </div>
   );
 }
@@ -209,7 +209,7 @@ function CategoryCharts({ summary }: { summary: Summary }) {
         ))}
       </ul>
 
-      <div className="label mt-6 flex flex-wrap items-center gap-x-5 gap-y-2" aria-hidden="true">
+      <div className="note mt-6 flex flex-wrap items-center gap-x-5 gap-y-2" aria-hidden="true">
         <span className="flex items-center gap-2">
           <svg width="18" height="8"><path d="M1 6 L6 2 L11 5 L17 1" fill="none" stroke="var(--muted)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
           Time per day
@@ -287,10 +287,10 @@ function CategoryChart({
 
       <svg viewBox={`0 0 ${W} ${H}`} className="mt-2 h-auto w-full overflow-visible" role="img" aria-label={summaryText}>
         {/* This week's band */}
-        <rect x={x(thisWeekFrom) - 4} y={PAD.top - 4} width={x(slots - 1) - x(thisWeekFrom) + 8} height={PLOT_H + 8} rx={4} fill="var(--sunken)" />
+        <rect x={x(thisWeekFrom) - 4} y={PAD.top - 4} width={x(slots - 1) - x(thisWeekFrom) + 8} height={PLOT_H + 8} rx={0} fill="var(--sunken)" />
 
         {/* Gridlines + y ticks (0, half, max) */}
-        <g fontSize="10" fill="var(--muted)">
+        <g fontSize="10" fill="var(--ink-3)" fontFamily="var(--mono)">
           {[0, maxHours / 2, maxHours].map((h) => (
             <g key={h}>
               <line x1={PAD.left} x2={W - PAD.right} y1={y(h * 60)} y2={y(h * 60)} stroke="var(--line)" strokeWidth="1" />

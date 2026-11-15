@@ -8,6 +8,7 @@ import type { MinorProject, Project } from "./types";
 export const projects: Project[] = [
   {
     slug: "guitar-tab-ai",
+    stat: { value: "94.5%", label: "Exact string and fret when the tab is on screen" },
     title: "Guitar Tab AI",
     summary: "Turns a recording, a song link or a video into guitar tab you can read, hear and download.",
     kind: "Personal project · AI / Audio",
@@ -37,6 +38,7 @@ export const projects: Project[] = [
   },
   {
     slug: "geniboo",
+    stat: { value: "9", label: "Program categories, registered in English or French" },
     title: "GENIBOO",
     summary: "Bilingual registration and payments for a children's nonprofit.",
     kind: "Client work · Web",
@@ -75,6 +77,7 @@ export const projects: Project[] = [
   },
   {
     slug: "lynx",
+    stat: { value: "<800 ms", label: "Responses in the live pitch simulator" },
     title: "Lynx",
     summary: "A RAG co-pilot that turns technical IP into an investor thesis, then pitches it to a simulated VC.",
     kind: "Team project · AI",
@@ -106,6 +109,7 @@ export const projects: Project[] = [
   },
   {
     slug: "job-tracker",
+    stat: { value: "11", label: "REST endpoints, every user route behind JWT" },
     title: "Job Application Tracker",
     summary: "A full-stack tracker for co-op applications, with a full history of every status change.",
     kind: "Personal project · Full-stack",
@@ -129,6 +133,7 @@ export const projects: Project[] = [
   },
   {
     slug: "facet",
+    stat: { value: "468", label: "Facial landmarks tracked per frame" },
     // Formerly "Chud.ai". The repo is still named chud-ai.
     title: "Facet",
     summary: "Real-time facial geometry analysis from a webcam feed.",

@@ -23,7 +23,7 @@ export function VideoPoster({
   const [playing, setPlaying] = useState(false);
 
   return (
-    <div className="relative aspect-video overflow-hidden bg-surface">
+    <div className="relative aspect-video overflow-hidden bg-sunken">
       {playing ? (
         <iframe
           className="absolute inset-0 size-full"
@@ -42,7 +42,7 @@ export function VideoPoster({
           {designed ? (
             <span className="absolute inset-0 flex flex-col justify-between bg-sunken p-5 text-left sm:p-8">
               <span className="label">Video · YouTube</span>
-              <span className="pb-12 text-[clamp(1.75rem,1rem+3vw,3.25rem)] font-medium leading-none tracking-[-0.035em] sm:pb-14">
+              <span className="pb-12 text-[clamp(1.75rem,1rem+3vw,3.25rem)] font-light leading-none tracking-[-0.025em] sm:pb-14">
                 {title}
               </span>
             </span>
@@ -56,7 +56,7 @@ export function VideoPoster({
               priority={priority}
             />
           )}
-          <span className="absolute bottom-4 left-4 inline-flex items-center gap-2 rounded-full bg-raised/95 px-4 py-2 text-sm text-ink shadow-sm ring-1 ring-line backdrop-blur-sm transition-transform duration-300 ease-out group-hover:scale-105 motion-reduce:transform-none">
+          <span className="absolute bottom-4 left-4 inline-flex items-center gap-2.5 bg-raised/95 px-4 py-2.5 font-mono text-[11px] uppercase tracking-[0.14em] text-ink ring-1 ring-line backdrop-blur-sm transition-transform duration-300 ease-out group-hover:scale-105 motion-reduce:transform-none">
             <svg viewBox="0 0 12 12" className="size-3 fill-accent" aria-hidden="true">
               <path d="M3 1.5v9l7.5-4.5z" />
             </svg>

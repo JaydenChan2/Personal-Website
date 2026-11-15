@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { container, PageFooter, PageTitle } from "@/components/container";
+import { SecHead } from "@/components/container";
 import portrait from "@/public/me.png";
 
 export const metadata: Metadata = {
@@ -17,61 +17,54 @@ const offline = [
 
 export default function AboutPage() {
   return (
-    <>
-      <div className={`${container} pt-10 md:pt-16`}>
-        <div className="grid gap-x-10 gap-y-10 md:grid-cols-12">
-          <div className="md:col-span-7">
-            <PageTitle title="About" />
-            {/* Draft written from facts on the old site and resume. Rewrite it in your own voice. */}
-            <div className="mt-8 space-y-5 text-lede">
-              <p>
-                I&rsquo;m studying Computer Science at Waterloo and Business at Laurier. Most of what I build sits where
-                software meets the real world: a drone that has to correct itself within 200&nbsp;ms, a data pipeline
-                feeding a disease forecast, a payment form a parent has to trust.
-              </p>
-              <p className="text-muted">
-                Before university I started an AI and game development club at my high school and taught it for a
-                year: 40+ members, neural networks built from scratch, and two teams in the board&rsquo;s top five.
-              </p>
-              <p className="text-muted">
-                If you&rsquo;re hiring for software or ML internships,{" "}
-                <Link href="/contact" className="link-u text-ink">
-                  say hello
-                </Link>
-                .
-              </p>
-            </div>
-          </div>
-          <figure className="md:col-span-4 md:col-start-9 md:pt-3">
-            <div className="detect relative max-w-[20rem]">
-              <Image
-                src={portrait}
-                alt="Portrait of Jayden Chan"
-                sizes="(min-width: 768px) 320px, 80vw"
-                placeholder="blur"
-                priority
-                className="h-auto w-full rounded-md"
-              />
-              <span className="detect-box" data-label="person · Jayden" />
-            </div>
+    <div className="wrap page-top pb-[clamp(72px,11vh,130px)]">
+      <SecHead as="h1" label="About">
+        A little about me, <b>outside the resume.</b>
+      </SecHead>
+
+      <div className="grid12 items-start">
+        <div className="about-plate montage reveal" role="group" aria-label="Portrait of Jayden Chan">
+          <figure className="ph" data-depth="0.1">
+            <Image src={portrait} alt="Portrait of Jayden Chan" sizes="(min-width: 960px) 30vw, 90vw" placeholder="blur" priority />
           </figure>
         </div>
-
-        <section aria-labelledby="offline" className="mt-20 md:mt-28">
-          <h2 id="offline" className="text-2xl tracking-tight">
-            Away from the keyboard
-          </h2>
-          <ul className="mt-6 grid gap-6 border-t border-line pt-6 sm:grid-cols-3">
-            {offline.map((o) => (
-              <li key={o.title} >
-                <p className="font-medium">{o.title}</p>
-                <p className="mt-1 text-muted">{o.body}</p>
-              </li>
-            ))}
-          </ul>
-        </section>
+        {/* Draft written from facts on the old site and resume. Rewrite it in your own voice. */}
+        <div className="about-copy">
+          <p className="lede fx">
+            I&rsquo;m studying Computer Science at Waterloo and Business at Laurier.{" "}
+            <b>Most of what I build sits where software meets the real world:</b> a drone that has to correct itself
+            within 200&nbsp;ms, a data pipeline feeding a disease forecast, a payment form a parent has to trust.
+          </p>
+          <div className="body-copy fx">
+            <p>
+              Before university I started an AI and game development club at my high school and taught it for a year:
+              40+ members, neural networks built from scratch, and two teams in the board&rsquo;s top five.
+            </p>
+            <p>
+              If you&rsquo;re hiring for software or ML internships,{" "}
+              <Link href="/contact" className="link-u text-ink">
+                say hello
+              </Link>
+              .
+            </p>
+          </div>
+        </div>
       </div>
-      <PageFooter />
-    </>
+
+      <section aria-labelledby="offline" className="mt-[clamp(72px,11vh,130px)]">
+        <h2 id="offline" className="mono fx mb-6">
+          Away from the keyboard
+        </h2>
+        <ul className="grid12 border-t border-line pt-6">
+          {offline.map((o, i) => (
+            <li key={o.title} className="fx col-span-12 md:col-span-4">
+              <p className="sub">{String(i + 1).padStart(2, "0")}</p>
+              <p className="mt-2 text-[19px] font-semibold">{o.title}</p>
+              <p className="mt-1 max-w-[34ch] text-ink-2">{o.body}</p>
+            </li>
+          ))}
+        </ul>
+      </section>
+    </div>
   );
 }

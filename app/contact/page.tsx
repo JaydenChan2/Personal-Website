@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { container, PageFooter } from "@/components/container";
 import { CopyEmail } from "@/components/copy-email";
 import { ArrowOut, T } from "@/components/text";
 import { site } from "@/content/site";
@@ -16,44 +15,39 @@ export default function ContactPage() {
   ];
 
   return (
-    <>
-      <div className={`${container} flex flex-1 flex-col justify-center py-12`}>
-        <div className="max-w-[46rem]">
-          <p className="intro-item label">Contact</p>
-          <h1 className="intro-item mt-3 text-display" style={{ "--d": "40ms" } as React.CSSProperties}>
-            Say hello.
+    <div className="wrap page-top flex flex-1 flex-col justify-center">
+      <div className="grid12">
+        <div className="col-span-12 lg:col-span-10">
+          <p className="mono fx">Contact</p>
+          <h1 className="h-display fx mt-6">
+            Say <b>hello.</b>
           </h1>
-          <p className="intro-item mt-8 max-w-[34ch] text-lede text-muted" style={{ "--d": "80ms" } as React.CSSProperties}>
+          <p className="fx mt-6 max-w-[40ch] text-ink-2">
             Hiring for an internship, or building something interesting? Email is the fastest way to reach me.
           </p>
-          <div className="intro-item mt-8 text-xl sm:text-2xl" style={{ "--d": "120ms" } as React.CSSProperties}>
-            <CopyEmail email={site.email} />
+          <div className="fx mt-12">
+            <CopyEmail email={site.email} big />
           </div>
-          <ul className="intro-item mt-14 border-t border-line" style={{ "--d": "160ms" } as React.CSSProperties}>
+          <ul className="fx mt-16 max-w-[44rem] border-t border-line-2">
             {links.map((l) => (
-              <li key={l.label} className="border-b border-line">
-                <a
-                  href={l.href}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="group flex items-baseline justify-between gap-6 py-4"
-                >
-                  <span className="font-medium">
+              <li key={l.label}>
+                <a href={l.href} target="_blank" rel="noreferrer" className="index-row !grid-cols-[1fr_auto]">
+                  <span className="ttl">
                     {l.label}
                     <ArrowOut />
                   </span>
-                  <span className="label transition-colors group-hover:text-ink">{l.note}</span>
+                  <span className="med normal-case tracking-normal">{l.note}</span>
                 </a>
               </li>
             ))}
           </ul>
           {site.availability && (
-            <p className="label mt-6">
+            <p className="mono mt-6">
               <T value={site.availability} />
             </p>
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 }
