@@ -746,16 +746,6 @@ a:focus-visible > .arr {
 .arr-3 .m-b { left: 0; bottom: 2%; width: calc(var(--u) * 3 - var(--gap)); height: 42%; z-index: 3; }
 .arr-3 .m-c { left: calc(var(--u) * 6); bottom: 0; width: calc(var(--u) * 3 - var(--gap)); height: 46%; z-index: 1; }
 
-/* ============ Full-bleed plate ============ */
-.plate-bleed {
-  padding-bottom: clamp(28px, 4vh, 56px);
-}
-.plate-bleed .ph {
-  display: block;
-  height: min(88vh, 56vw, 860px);
-  box-shadow: none;
-}
-
 /* ============ Index (list with cursor-following preview) ============ */
 .index-sec {
   background: var(--bg-2);
@@ -890,6 +880,9 @@ a:focus-visible > .arr {
   border-bottom: 1px solid var(--line);
   font-size: 13px;
 }
+.cred li:has(.logo-tile) {
+  align-items: center;
+}
 .cred li em {
   font-style: normal;
   color: var(--ink-3);
@@ -897,6 +890,26 @@ a:focus-visible > .arr {
   font-size: 10px;
   letter-spacing: 0.16em;
   white-space: nowrap;
+}
+
+/* ============ Organisation logos ============ */
+.logo-tile {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow: var(--plate-edge), var(--plate-shadow);
+}
+.logo-tile--pad img {
+  padding: 14%;
+}
+.logo-tile--mark {
+  background: #19191b;
+  color: #ececea;
+  font-family: var(--mono);
+  letter-spacing: 0.08em;
 }
 
 /* ============ Rows: a mono label in the margin, the content on the measure ============ */
@@ -1004,6 +1017,88 @@ a:focus-visible > .arr {
 }
 .foot-cols a:hover {
   color: var(--ink);
+}
+
+/* ============ Cursor follower ============ */
+/* A ring that trails the pointer and a dot that sits on it, drawn in the ink colour
+   so they read on either ground. */
+.cursor {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s var(--ease);
+}
+.cursor[data-on] {
+  opacity: 1;
+}
+.cursor-ring,
+.cursor-dot {
+  position: absolute;
+  left: 0;
+  top: 0;
+  border-radius: 50%;
+  will-change: transform;
+}
+.cursor-ring {
+  width: 34px;
+  height: 34px;
+  margin: -17px 0 0 -17px;
+  border: 1px solid var(--ink);
+  display: grid;
+  place-items: center;
+  transition:
+    width 0.45s var(--ease),
+    height 0.45s var(--ease),
+    margin 0.45s var(--ease),
+    background-color 0.3s var(--ease),
+    border-color 0.3s var(--ease);
+}
+.cursor-dot {
+  width: 4px;
+  height: 4px;
+  margin: -2px 0 0 -2px;
+  background: var(--ink);
+}
+.cursor-label {
+  position: relative;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--bg);
+  opacity: 0;
+  transition: opacity 0.25s var(--ease);
+}
+/* Over a link or button: the ring opens up. */
+.cursor[data-state="link"] .cursor-ring {
+  width: 54px;
+  height: 54px;
+  margin: -27px 0 0 -27px;
+}
+.cursor[data-state="link"] .cursor-dot,
+.cursor[data-state="label"] .cursor-dot {
+  opacity: 0;
+}
+/* Over something with data-cursor="…": a solid disc with a label. */
+.cursor[data-state="label"] .cursor-ring {
+  width: 84px;
+  height: 84px;
+  margin: -42px 0 0 -42px;
+  background: var(--ink);
+  border-color: var(--ink);
+}
+.cursor[data-state="label"] .cursor-label {
+  opacity: 1;
+}
+.has-cursor [data-cursor] {
+  cursor: none;
+}
+.cursor[data-press] .cursor-ring {
+  width: 26px;
+  height: 26px;
+  margin: -13px 0 0 -13px;
 }
 
 /* Activity charts: CSS-only hover crosshair. */
@@ -1152,9 +1247,6 @@ a:focus-visible > .arr {
   }
   .montage .m-c {
     display: none;
-  }
-  .plate-bleed .ph {
-    height: 62vw;
   }
 }
 

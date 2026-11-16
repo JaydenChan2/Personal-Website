@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { Cursor } from "@/components/cursor";
 import { Motion } from "@/components/motion";
 import { Nav } from "@/components/nav";
 import { SiteFooter } from "@/components/site-footer";
@@ -65,6 +66,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </main>
         <SiteFooter />
         <Motion />
+        <Cursor />
       </body>
     </html>
   );

@@ -1,13 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { SecHead } from "@/components/container";
-import { ListeningSection } from "@/components/listening";
+import { OrgLogo } from "@/components/org-logo";
 import { ProjectPlates } from "@/components/plate";
 import { T } from "@/components/text";
 import { experience } from "@/content/experience";
-import { featuredProjects, getProject } from "@/content/projects";
+import { featuredProjects } from "@/content/projects";
 import { site } from "@/content/site";
-import { getListening, type Listening } from "@/lib/listening";
 import portrait from "@/public/me.png";
 
 const ARRANGEMENTS = ["arr-1", "arr-2", "arr-3"];
@@ -15,18 +14,8 @@ const two = (n: number) => String(n).padStart(2, "0");
 /** "May 2026" → "2026" */
 const yearOf = (s: string) => s.match(/\d{4}/)?.[0] ?? s;
 
-// Re-render at most hourly so "On repeat" stays current (keep in sync with listening.revalidateSeconds).
-export const revalidate = 3600;
+export default function Home() {
 
-export default async function Home() {
-  let listening: Listening | null = null;
-  try {
-    listening = await getListening();
-  } catch (err) {
-    console.error("[listening]", err);
-  }
-
-  const lynx = getProject("lynx")!;
 
   return (
     <>
@@ -117,6 +106,7 @@ export default async function Home() {
                 href={`/work/${p.slug}`}
                 className={`${ARRANGEMENTS[i % 3]} montage reveal`}
                 aria-label={`${p.title}: read the write-up`}
+                data-cursor="View"
               >
                 <ProjectPlates project={p} sizes="(min-width: 960px) 52vw, 90vw" />
                 <span className="montage-cap mono" aria-hidden="true" />
@@ -126,17 +116,6 @@ export default async function Home() {
         ))}
       </section>
 
-      {/* ============ Full-bleed plate ============ */}
-      <section className="plate-bleed reveal" aria-label="Plate">
-        <figure className="ph">
-          <Image src={lynx.cover!.src} alt={lynx.cover!.alt} width={lynx.cover!.width} height={lynx.cover!.height} sizes="100vw" />
-        </figure>
-        <div className="wrap">
-          <span className="sub block pt-3.5">
-            Plate {two(featuredProjects.indexOf(lynx) + 1)} · {lynx.title} · {lynx.kind} · {typeof lynx.year === "string" ? lynx.year : ""}
-          </span>
-        </div>
-      </section>
 
       {/* ============ About ============ */}
       <section id="about" className="wrap section" aria-labelledby="about-h">
@@ -167,9 +146,12 @@ export default async function Home() {
             <ul className="cred fx">
               {experience.map((r) => (
                 <li key={r.id}>
-                  <Link href={`/experience#${r.id}`} className="link">
-                    {r.role}, {r.org}
-                  </Link>
+                  <span className="flex items-center gap-3">
+                    <OrgLogo role={r} size={26} />
+                    <Link href={`/experience#${r.id}`} className="link">
+                      {r.role}, {r.org}
+                    </Link>
+                  </span>
                   <em>
                     {yearOf(r.start)}
                     {r.end === "Present" ? "–" : yearOf(r.end) !== yearOf(r.start) ? `–${yearOf(r.end).slice(2)}` : ""}
@@ -180,9 +162,6 @@ export default async function Home() {
           </div>
         </div>
       </section>
-
-      {/* ============ On repeat (hidden until Last.fm is configured) ============ */}
-      {listening && <ListeningSection data={listening} label="03 — Listening" />}
     </>
   );
 }

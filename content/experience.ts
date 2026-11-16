@@ -4,6 +4,7 @@ import type { Role } from "./types";
 export const experience: Role[] = [
   {
     id: "whn",
+    logo: { src: "/logos/whn.png", fit: "cover" },
     role: "Software Engineer Intern",
     org: "World Health Network",
     href: "https://whn.global/",
@@ -19,6 +20,7 @@ export const experience: Role[] = [
   },
   {
     id: "geniboo",
+    logo: { src: "/logos/geniboo.png" },
     role: "Full-Stack Developer",
     org: "GENIBOO (HRSPRO)",
     href: "https://www.geniboo.ca/",
@@ -34,6 +36,7 @@ export const experience: Role[] = [
   },
   {
     id: "warg",
+    logo: { src: "/logos/warg.png" },
     role: "Autonomy Engineer",
     org: "Waterloo Aerial Robotics Group",
     href: "https://www.uwarg.com/",
@@ -49,6 +52,8 @@ export const experience: Role[] = [
   },
   {
     id: "futuriq",
+    // No confirmed official logo yet: drop one in /public/logos and set `logo`.
+    mark: "F",
     role: "Software Developer Intern",
     org: "FuturIQ",
     href: "https://www.linkedin.com/company/futuriq-inc/",
@@ -62,6 +67,7 @@ export const experience: Role[] = [
   },
   {
     id: "club",
+    mark: "AI",
     role: "Founder & Instructor",
     org: "AI and Game Development Club",
     start: "Sep 2024",
