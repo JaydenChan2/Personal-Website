@@ -22,7 +22,16 @@ export type IndexItem = {
  * last with the same downward wipe the montages use. Below 960px each row
  * carries its own thumbnail instead.
  */
-export function ProjectIndex({ items, aspect = "4 / 3" }: { items: IndexItem[]; aspect?: string }) {
+export function ProjectIndex({
+  items,
+  aspect = "4 / 3",
+  thumbs = false,
+}: {
+  items: IndexItem[];
+  aspect?: string;
+  /** Show each row's thumbnail at every width, not just below 960px. */
+  thumbs?: boolean;
+}) {
   const [current, setCurrent] = useState<string | null>(null);
   const [prev, setPrev] = useState<string | null>(null);
   const [on, setOn] = useState(false);
@@ -85,7 +94,7 @@ export function ProjectIndex({ items, aspect = "4 / 3" }: { items: IndexItem[]; 
   return (
     <div className="grid12" style={{ "--art-aspect": aspect } as React.CSSProperties}>
       <ol
-        className="index-list fx"
+        className={`index-list fx ${thumbs ? "index-list--thumbs" : ""}`}
         onMouseMove={(e) => {
           if (!fine()) return;
           const row = (e.target as Element).closest<HTMLElement>("[data-key]");

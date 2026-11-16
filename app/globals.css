@@ -833,6 +833,163 @@ a:focus-visible > .arr {
   box-shadow: none;
 }
 
+/* Lists that show their thumbnail at every width (On repeat). */
+.index-list--thumbs .index-row {
+  grid-template-columns: 40px 52px minmax(0, 1fr) auto auto;
+  align-items: center;
+}
+.index-list--thumbs .index-row .thumb {
+  display: block;
+  position: relative;
+  aspect-ratio: var(--art-aspect, 4 / 3);
+}
+.index-list--thumbs .thumb .t-label,
+.index-list--thumbs .thumb .t-title {
+  display: none;
+}
+
+/* ============ Listening stats ============ */
+.listen-stats {
+  margin-top: clamp(56px, 9vh, 104px);
+}
+.listen-kpis {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px clamp(32px, 7vw, 96px);
+  border-top: 1px solid var(--line-2);
+  padding-top: 22px;
+  margin-bottom: clamp(44px, 7vh, 72px);
+}
+.listen-kpis dd {
+  margin-top: 8px;
+  font-size: clamp(2.2rem, 4vw, 3.4rem);
+  font-weight: 300;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+.listen-grid {
+  align-items: start;
+}
+.listen-artists {
+  grid-column: 1 / span 6;
+}
+.listen-genres {
+  grid-column: 8 / span 5;
+}
+.listen-artists h3,
+.listen-genres h3 {
+  margin-bottom: 14px;
+}
+.listen-artists ol {
+  border-top: 1px solid var(--line-2);
+}
+.listen-artists li {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: baseline;
+  padding: 12px 0 14px;
+  border-bottom: 1px solid var(--line-2);
+}
+.listen-artists .no,
+.listen-artists .n {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+.listen-artists .n {
+  color: var(--ink-2);
+}
+.listen-artists .name {
+  /* --s is sqrt(plays / top plays): the type grows with plays, the bar stays exact */
+  font-size: calc(1rem + var(--s, 0) * clamp(0.5rem, 2.4vw, 1.9rem));
+  font-weight: 300;
+  letter-spacing: -0.015em;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+.listen-artists li:first-child .name {
+  font-weight: 600;
+}
+.listen-artists .bar {
+  display: block;
+  height: 4px;
+  margin-top: 10px;
+  background: var(--ink);
+  border-radius: 0 4px 4px 0;
+}
+.genre-strip {
+  display: flex;
+  gap: 2px;
+  height: 28px;
+}
+.genre-strip .seg {
+  flex: 0 1 0;
+  min-width: 3px;
+  container-type: inline-size;
+  display: flex;
+  align-items: center;
+  padding-inline: 8px;
+  border-radius: 4px;
+  background: var(--ink);
+}
+.genre-strip .seg--other {
+  background: var(--ink-3);
+}
+.seg-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--bg);
+}
+/* A label that wouldn't fit inside its block isn't drawn; the list below names it.
+   Widths are the block's content box (padding excluded); mono 10px runs ~7.4px a
+   letter, so each length class (s ≤4, m ≤7, l 8+ letters) has its own cut-off. */
+@container (max-width: 32px) {
+  .seg-label--s {
+    display: none;
+  }
+}
+@container (max-width: 56px) {
+  .seg-label--m {
+    display: none;
+  }
+}
+@container (max-width: 80px) {
+  .seg-label--l {
+    display: none;
+  }
+}
+.genre-list {
+  margin-top: 18px;
+  border-top: 1px solid var(--line-2);
+}
+.genre-list li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2px 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line-2);
+}
+.genre-list .g {
+  font-size: 17px;
+  font-weight: 300;
+}
+.genre-list .pct {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--ink-2);
+  align-self: baseline;
+}
+.genre-list .who {
+  grid-column: 1 / -1;
+}
+
 /* ============ About ============ */
 .about-plate {
   grid-column: 1 / span 4;
@@ -1112,6 +1269,13 @@ a:focus-visible > .arr {
 
 /* ============ Responsive ============ */
 @media (max-width: 960px) {
+  .listen-artists,
+  .listen-genres {
+    grid-column: 1 / -1;
+  }
+  .listen-genres {
+    margin-top: 48px;
+  }
   .hero {
     min-height: auto;
     padding-top: 120px;
@@ -1215,6 +1379,9 @@ a:focus-visible > .arr {
   .index-row .no,
   .index-row .med {
     display: none;
+  }
+  .index-list--thumbs .index-row {
+    grid-template-columns: 48px minmax(0, 1fr) auto;
   }
   .foot-cols .col {
     grid-column: 1 / -1;
