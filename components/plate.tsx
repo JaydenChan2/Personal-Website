@@ -103,3 +103,21 @@ export function ProjectPlates({ project: p, sizes }: { project: Project; sizes: 
     </>
   );
 }
+
+/** Album art for a track, or a typeset plate with the title when Last.fm has none. */
+export function TrackPlate({ name, artist, image, className = "" }: { name: string; artist: string; image: string | null; className?: string }) {
+  if (image) {
+    return (
+      <figure className={`ph ${className}`}>
+        {/* Last.fm art is already small (≤300px) and comes from its CDN, so no next/image. */}
+        <img src={image} alt={`${name} by ${artist}, album art`} loading="lazy" decoding="async" />
+      </figure>
+    );
+  }
+  return (
+    <figure className={`ph ph--type ph--ink ${className}`}>
+      <span className="t-label">{artist}</span>
+      <span className="t-title">{name}</span>
+    </figure>
+  );
+}

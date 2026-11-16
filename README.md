@@ -90,6 +90,8 @@ would expose them to the browser.
 | `SUPABASE_URL` | Activity tracker storage | Supabase → Project Settings → API → Project URL |
 | `SUPABASE_SERVICE_ROLE_KEY` | Server-only database access | Supabase → Project Settings → API → `service_role` key |
 | `TRACKER_SECRET` | Authenticating the iOS Shortcut | `openssl rand -base64 32` (at least 16 characters) |
+| `LASTFM_API_KEY` | "On repeat" (top songs this week) on the home page | [last.fm/api/account/create](https://www.last.fm/api/account/create) |
+| `LASTFM_USERNAME` | Whose listening to show | Your Last.fm username (connected to Spotify) |
 
 ## Project structure
 
