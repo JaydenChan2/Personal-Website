@@ -2,8 +2,6 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import type { Project } from "@/content/types";
-import { CoverPlate } from "./plate";
 
 export type IndexItem = {
   key: string;
@@ -14,16 +12,17 @@ export type IndexItem = {
   year: string;
   href: string;
   external?: boolean;
-  plate: Pick<Project, "title" | "stack" | "cover">;
+  /** The plate shown in the hover preview and as the row thumbnail. */
+  art: React.ReactNode;
 };
 
 /**
- * Catalogue of every project. On a fine pointer, a preview hangs in its own
+ * A catalogue list (projects on /work, tracks on the home page). On a fine pointer, a preview hangs in its own
  * column and follows the cursor vertically; each new entry "prints" over the
  * last with the same downward wipe the montages use. Below 960px each row
  * carries its own thumbnail instead.
  */
-export function ProjectIndex({ items }: { items: IndexItem[] }) {
+export function ProjectIndex({ items, aspect = "4 / 3" }: { items: IndexItem[]; aspect?: string }) {
   const [current, setCurrent] = useState<string | null>(null);
   const [prev, setPrev] = useState<string | null>(null);
   const [on, setOn] = useState(false);
@@ -84,7 +83,7 @@ export function ProjectIndex({ items }: { items: IndexItem[] }) {
   const fine = () => matchMedia("(hover: hover) and (pointer: fine)").matches;
 
   return (
-    <div className="grid12">
+    <div className="grid12" style={{ "--art-aspect": aspect } as React.CSSProperties}>
       <ol
         className="index-list fx"
         onMouseMove={(e) => {
@@ -113,7 +112,7 @@ export function ProjectIndex({ items }: { items: IndexItem[] }) {
             <>
               <span className="no">{it.no}</span>
               <div className="thumb" aria-hidden="true">
-                <CoverPlate project={it.plate} sizes="64px" className="ph-fill" />
+                {it.art}
               </div>
               <span className="ttl">
                 {it.title}
@@ -153,7 +152,7 @@ export function ProjectIndex({ items }: { items: IndexItem[] }) {
                   transition: isCur && prev ? "clip-path .5s cubic-bezier(.22,.9,.24,1)" : "none",
                 }}
               >
-                <CoverPlate project={it.plate} sizes="(min-width: 960px) 30vw, 1px" className="ph-fill" />
+                {it.art}
               </div>
             );
           })}

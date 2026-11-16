@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { SecHead } from "@/components/container";
+import { CoverPlate } from "@/components/plate";
 import { ProjectIndex, type IndexItem } from "@/components/project-index";
 import { isTodo } from "@/content/types";
 import { minorProjects, projects } from "@/content/projects";
@@ -19,7 +20,7 @@ export default function WorkPage() {
       kind: p.kind.split(" · ").pop() ?? p.kind,
       year: isTodo(p.year) ? "" : p.year,
       href: `/work/${p.slug}`,
-      plate: { title: p.title, stack: p.stack, cover: p.cover },
+      art: <CoverPlate project={p} sizes="(min-width: 960px) 30vw, 64px" className="ph-fill" />,
     })),
     ...minorProjects.map((p, i) => ({
       key: p.title,
@@ -30,7 +31,7 @@ export default function WorkPage() {
       year: "↗",
       href: p.href && !isTodo(p.href) ? p.href : "#",
       external: true,
-      plate: { title: p.title, stack: p.stack },
+      art: <CoverPlate project={p} sizes="1px" className="ph-fill" />,
     })),
   ];
 

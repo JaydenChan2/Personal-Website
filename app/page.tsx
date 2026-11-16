@@ -1,11 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { SecHead } from "@/components/container";
+import { ListeningSection } from "@/components/listening";
 import { ImagePlate, ProjectPlates } from "@/components/plate";
 import { T } from "@/components/text";
 import { experience } from "@/content/experience";
 import { featuredProjects, getProject } from "@/content/projects";
 import { site } from "@/content/site";
+import { getListening, type Listening } from "@/lib/listening";
 import portrait from "@/public/me.png";
 
 const ARRANGEMENTS = ["arr-1", "arr-2", "arr-3"];
@@ -13,7 +15,17 @@ const two = (n: number) => String(n).padStart(2, "0");
 /** "May 2026" → "2026" */
 const yearOf = (s: string) => s.match(/\d{4}/)?.[0] ?? s;
 
-export default function Home() {
+// Re-render at most hourly so "On repeat" stays current (keep in sync with listening.revalidateSeconds).
+export const revalidate = 3600;
+
+export default async function Home() {
+  let listening: Listening | null = null;
+  try {
+    listening = await getListening();
+  } catch (err) {
+    console.error("[listening]", err);
+  }
+
   const guitar = getProject("guitar-tab-ai")!;
   const geniboo = getProject("geniboo")!;
   const lynx = getProject("lynx")!;
@@ -196,6 +208,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* ============ On repeat (hidden until Last.fm is configured) ============ */}
+      {listening && <ListeningSection data={listening} label="03 — Listening" />}
     </>
   );
 }
