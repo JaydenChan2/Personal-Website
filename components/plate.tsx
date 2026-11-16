@@ -84,22 +84,14 @@ export function StackPlate({ stack, className = "", depth, caption }: Common & {
   );
 }
 
-/** The three plates hung for a project: cover, headline outcome, and a second screenshot or the stack. */
-export function ProjectPlates({ project: p, sizes }: { project: Project; sizes: { a: string; c: string } }) {
-  const second = p.gallery?.[0];
+/** The three plates hung for a project card: cover, headline outcome, stack. */
+export function ProjectPlates({ project: p, sizes }: { project: Project; sizes: string }) {
+  const stackCaption = `Stack — ${p.stack.join(", ")}`;
   return (
     <>
-      <CoverPlate project={p} sizes={sizes.a} className="m-a" depth={0.06} caption={`${p.title} — ${p.kind}`} />
-      {p.stat ? (
-        <StatPlate stat={p.stat} className="m-b" depth={0.2} caption={`${p.stat.value} — ${p.stat.label}`} />
-      ) : (
-        <StackPlate stack={p.stack} className="m-b" depth={0.2} caption={`Stack — ${p.stack.join(", ")}`} />
-      )}
-      {second ? (
-        <ImagePlate image={second} sizes={sizes.c} className="m-c" depth={0.34} caption={second.caption} />
-      ) : (
-        <StackPlate stack={p.stack} className="m-c" depth={0.34} caption={`Stack — ${p.stack.join(", ")}`} />
-      )}
+      <CoverPlate project={p} sizes={sizes} className="m-a" depth={0.06} caption={`${p.title} — ${p.kind}`} />
+      {p.stat && <StatPlate stat={p.stat} className="m-b" depth={0.2} caption={`${p.stat.value} — ${p.stat.label}`} />}
+      <StackPlate stack={p.stack} className={p.stat ? "m-c" : "m-b"} depth={0.34} caption={stackCaption} />
     </>
   );
 }

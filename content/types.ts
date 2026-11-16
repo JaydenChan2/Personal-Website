@@ -68,4 +68,11 @@ export type Role = {
   points: string[];
   /** Slug of a related project page. */
   project?: string;
+  /**
+   * Organisation logo in /public/logos. "contain" (default) pads it on a white tile;
+   * "cover" fills the tile (for logos that are already a square app icon).
+   * Without one, the tile shows `mark` (or the org's first letter) in type.
+   */
+  logo?: { src: string; fit?: "contain" | "cover" };
+  mark?: string;
 };

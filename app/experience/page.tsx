@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { SecHead } from "@/components/container";
+import { OrgLogo } from "@/components/org-logo";
 import { ArrowOut } from "@/components/text";
 import { experience } from "@/content/experience";
 import { site } from "@/content/site";
@@ -21,7 +22,8 @@ export default function ExperiencePage() {
         {experience.map((r, i) => (
           <li key={r.id} id={r.id} className="row fx">
             <div className="row-label">
-              <p className="mono flex items-center gap-2.5">
+              <OrgLogo role={r} />
+              <p className="mono mt-5 flex items-center gap-2.5">
                 {r.current && <span className="live-dot" aria-hidden="true" />}
                 <span>
                   {r.start} – {r.end}
