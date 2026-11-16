@@ -1091,22 +1091,6 @@ a:focus-visible > .arr {
   line-height: 1.65;
   max-width: 62ch;
 }
-.ticks li {
-  display: flex;
-  gap: 14px;
-  color: var(--ink-2);
-}
-.ticks li + li {
-  margin-top: 10px;
-}
-.ticks li::before {
-  content: "";
-  flex-shrink: 0;
-  width: 12px;
-  height: 1px;
-  margin-top: 0.82em;
-  background: var(--line-2);
-}
 .num-list {
   counter-reset: n;
   border-top: 1px solid var(--line);

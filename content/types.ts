@@ -64,8 +64,8 @@ export type Role = {
   end: string;
   location: string;
   current?: boolean;
-  /** Scannable bullets. Lead with the result. */
-  points: string[];
+  /** One plain-language line: what I did, readable by anyone. */
+  summary: string;
   /** Slug of a related project page. */
   project?: string;
   /**

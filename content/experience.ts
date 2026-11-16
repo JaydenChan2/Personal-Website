@@ -1,6 +1,6 @@
 import type { Role } from "./types";
 
-/** Most recent first. Keep points short and lead with the result. */
+/** Most recent first. One plain-language line per role: what I did, readable by anyone. */
 export const experience: Role[] = [
   {
     id: "whn",
@@ -12,11 +12,7 @@ export const experience: Role[] = [
     end: "Present",
     location: "Remote",
     current: true,
-    points: [
-      "Built a Python ETL pipeline ingesting vaccination, outbreak and variant data from 4 public-health APIs (WHO, CDC, OWID), feeding a Fortran simulation of 15+ pathogen variants.",
-      "Engineered weather and infrastructure features in Pandas that improved a transmission forecasting model by 4% RMSE.",
-      "Designed tiered imputation for missing vaccination data, tagging every imputed row with provenance so downstream models can audit or exclude it.",
-    ],
+    summary: "Built the pipeline that feeds public-health data into disease-spread forecasts.",
   },
   {
     id: "geniboo",
@@ -27,11 +23,7 @@ export const experience: Role[] = [
     start: "Jul 2026",
     end: "Sep 2026",
     location: "Remote",
-    points: [
-      "Built the bilingual Next.js site with hand-rolled i18n and theming, covering 9 program categories.",
-      "Built Stripe flows for program fees, financial-assistance applications and donations.",
-      "Scoped features directly with the Executive Director through regular check-ins.",
-    ],
+    summary: "Built a bilingual website where families sign up and pay for kids' programs.",
     project: "geniboo",
   },
   {
@@ -44,39 +36,28 @@ export const experience: Role[] = [
     end: "Present",
     location: "Waterloo, ON",
     current: true,
-    points: [
-      "Split drone command execution across 3 parallel processes, cutting latency 40% over the sequential version.",
-      "Processed 50 Hz MAVLink telemetry in a closed loop, delivering altitude and yaw corrections within 200 ms.",
-      "Built 30 fps OpenCV target detection that held up across 5+ lighting conditions in field tests.",
-    ],
+    summary: "Write the software that helps a drone spot targets and correct its own flight.",
   },
   {
     id: "futuriq",
-    // No confirmed official logo yet: drop one in /public/logos and set `logo`.
-    mark: "F",
+    logo: { src: "/logos/futuriq.png" },
     role: "Software Developer Intern",
     org: "FuturIQ",
     href: "https://www.linkedin.com/company/futuriq-inc/",
     start: "Jul 2024",
     end: "Oct 2024",
     location: "Brampton, ON",
-    points: [
-      "Built an interactive 3D digital human with Unity and MetaHuman, integrated into a web app via API (~25% longer sessions in internal testing).",
-      "Built a Python chatbot backend for content recommendations, saving an estimated 3 hours a week of manual review.",
-    ],
+    summary: "Built a talking 3D avatar for a web app, plus a chatbot that recommends content.",
   },
   {
     id: "club",
-    mark: "AI",
+    // The club ran at St. Edmund Campion, so it uses the school's Bears logo.
+    logo: { src: "/logos/campion-bears.png" },
     role: "Founder & Instructor",
     org: "AI and Game Development Club",
     start: "Sep 2024",
     end: "Jun 2025",
     location: "Brampton, ON",
-    points: [
-      "Started the club from scratch and grew it to 40+ active members.",
-      "Taught CNNs and RNNs in TensorFlow across 8+ hands-on workshops.",
-      "Led teams to 4th and 5th at the 2025 Dufferin-Peel board-wide competition, the school's best-ever result.",
-    ],
+    summary: "Started my high school's AI club and taught 40+ students to build neural networks.",
   },
 ];

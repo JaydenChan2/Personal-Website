@@ -30,6 +30,11 @@ export const site = {
     school: "University of Waterloo & Wilfrid Laurier University",
     degree: "Bachelor of Computer Science + Bachelor of Business Administration, Double Degree with Co-op",
     end: "May 2030",
+    /** Shown as tiles on /experience, in the same order as `school`. */
+    logos: [
+      { org: "University of Waterloo", logo: { src: "/logos/waterloo.png", fit: "cover" as const } },
+      { org: "Wilfrid Laurier University", logo: { src: "/logos/laurier.png", fit: "cover" as const } },
+    ],
     coursework: [
       "Algorithm Design & Data Abstraction",
       "Object-Oriented Design",

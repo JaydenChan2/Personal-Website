@@ -48,11 +48,7 @@ export default function ExperiencePage() {
                   )}
                 </b>
               </h2>
-              <ul className="ticks mt-5 max-w-[66ch]">
-                {r.points.map((pt) => (
-                  <li key={pt}>{pt}</li>
-                ))}
-              </ul>
+              <p className="mt-3 max-w-[72ch] text-ink-2">{r.summary}</p>
               {r.project && (
                 <Link href={`/work/${r.project}`} className="ghost mt-6 inline-block">
                   Read the project write-up <span className="arr">→</span>
@@ -63,7 +59,12 @@ export default function ExperiencePage() {
         ))}
         <li id="education" className="row fx">
           <div className="row-label">
-            <p className="mono">Graduating {site.education.end}</p>
+            <div className="flex gap-3">
+              {site.education.logos.map((l) => (
+                <OrgLogo key={l.org} role={l} />
+              ))}
+            </div>
+            <p className="mono mt-5">Graduating {site.education.end}</p>
             <p className="sub mt-1">Education</p>
           </div>
           <div className="row-body">
