@@ -599,18 +599,14 @@ a:focus-visible > .arr {
 .hero-grid {
   align-items: center;
 }
+/* The hero is copy only: it gets nine columns, the paragraph keeps a short measure. */
 .hero-copy {
-  grid-column: 1 / span 5;
-  grid-row: 1;
+  grid-column: 1 / span 9;
   position: relative;
-  z-index: 5;
-  --col: calc((100% - 4 * var(--gap)) / 5);
-  --u: calc(var(--col) + var(--gap));
 }
 .hero-copy > .mono {
   display: block;
   margin-bottom: 26px;
-  max-width: calc(var(--u) * 4 - var(--gap));
 }
 .h-display {
   font-size: clamp(2.6rem, 4.1vw, 3.75rem);
@@ -620,11 +616,10 @@ a:focus-visible > .arr {
 }
 .h-display b {
   font-weight: 600;
-  white-space: nowrap;
 }
 .hero-copy p {
   margin-top: 26px;
-  max-width: calc(var(--u) * 4 - var(--gap));
+  max-width: 46ch;
   color: var(--ink-2);
   font-size: 15px;
 }
@@ -634,33 +629,6 @@ a:focus-visible > .arr {
   flex-wrap: wrap;
   align-items: center;
   gap: 22px;
-}
-.hero-montage {
-  grid-column: 5 / -1;
-  grid-row: 1;
-  height: min(72vh, 620px);
-  --col: calc((100% - 7 * var(--gap)) / 8);
-  --u: calc(var(--col) + var(--gap));
-}
-.hero-montage .m-a {
-  left: 0;
-  top: 2%;
-  width: calc(var(--u) * 6 - var(--gap));
-  height: 56%;
-}
-.hero-montage .m-b {
-  left: calc(var(--u) * 4);
-  top: 34%;
-  width: calc(var(--u) * 4 - var(--gap));
-  height: 38%;
-  z-index: 2;
-}
-.hero-montage .m-c {
-  left: calc(var(--u) * 1);
-  bottom: 0;
-  width: calc(var(--u) * 4 - var(--gap));
-  height: 36%;
-  z-index: 3;
 }
 .hero-foot {
   display: flex;
@@ -756,13 +724,6 @@ a:focus-visible > .arr {
   color: var(--ink-2);
   font-size: 14px;
   max-width: 32ch;
-}
-.specs {
-  margin-top: auto;
-  display: grid;
-  gap: 6px;
-  padding-top: 22px;
-  border-top: 1px solid var(--line);
 }
 .arr-1,
 .arr-2,
@@ -1062,17 +1023,6 @@ a:focus-visible > .arr {
   }
   .hero-copy {
     grid-column: 1 / -1;
-    grid-row: auto;
-    margin-bottom: 40px;
-  }
-  .hero-copy > .mono,
-  .hero-copy p {
-    max-width: 46ch;
-  }
-  .hero-montage {
-    grid-column: 1 / -1;
-    grid-row: auto;
-    height: min(60vh, 520px);
   }
   .sec-head > .mono,
   .sec-head h1,
@@ -1161,7 +1111,7 @@ a:focus-visible > .arr {
     align-items: flex-start;
     gap: 8px;
   }
-  .hero-foot [aria-hidden="true"] {
+  .hero-foot > [aria-hidden="true"] {
     display: none;
   }
   .index-row {
@@ -1179,8 +1129,7 @@ a:focus-visible > .arr {
 @media (max-width: 560px) {
   .arr-1,
   .arr-2,
-  .arr-3,
-  .hero-montage {
+  .arr-3 {
     height: min(62vw, 300px);
   }
   .montage .m-a {
